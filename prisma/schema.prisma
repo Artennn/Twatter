@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Post {
+  id           String   @id @default(cuid())
+  content      String
+  likes        Int      @default(0)
+  retweets     Int      @default(0)
+  createdBy    String
+  createdAt    DateTime
+  parentPostID String?
+  comments     Post[]   @relation("comments")
+  parent       Post?    @relation("comments", fields: [parentPostID], references: [id])
+  user         User     @relation(fields: [createdBy], references: [id])
+}
+
+model Follows {
+  followerId  String
+  follower    User @relation("follower", fields: [followerId], references: [id])
+  followingId String
+  following   User @relation("following", fields: [followingId], references: [id])
+
+  @@id([followerId, followingId])
+}
+
+// Necessary for Next auth
+model User {
+  id            String    @id @default(cuid())
+  name          String    @unique
+  displayName   String?
+  image         String?
+  verified      Boolean?
+  emailVerified DateTime?
+  email         String   @unique
+  posts         Post[]
+  following     Follows[] @relation("following")
+  followers     Follows[] @relation("follower")
+  accounts      Account[]
+  sessions      Session[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
