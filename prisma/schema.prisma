@@ -11,39 +11,38 @@ datasource db {
 }
 
 model Post {
-  id           String   @id @default(cuid())
+  id           String      @id @default(cuid())
   content      String
-  likes        Int      @default(0)
-  retweets     Int      @default(0)
-  createdBy    String
-  createdAt    DateTime
+  likes        Int         @default(0)
+  retweets     Int         @default(0)
+  createdAt    DateTime    @default(now())
+  ownerID      Int
+  owner        Profile     @relation(fields: [ownerID], references: [id])
   parentPostID String?
-  comments     Post[]   @relation("comments")
-  parent       Post?    @relation("comments", fields: [parentPostID], references: [id])
-  user         User     @relation(fields: [createdBy], references: [id])
+  parent       Post?       @relation("comments", fields: [parentPostID], references: [id])
+  comments     Post[]      @relation("comments")
 }
 
-model Follows {
-  followerId  String
-  follower    User @relation("follower", fields: [followerId], references: [id])
-  followingId String
-  following   User @relation("following", fields: [followingId], references: [id])
-
-  @@id([followerId, followingId])
+model Profile {
+  id          Int         @id @default(autoincrement())
+  username    String      @unique
+  displayName String
+  image       String
+  verified    Boolean?
+  blocked     Boolean?
+  admin       Boolean?
+  user        User[]
+  posts       Post[]
 }
 
-// Necessary for Next auth
+//Necessary for Next auth
 model User {
   id            String    @id @default(cuid())
-  name          String    @unique
-  displayName   String?
-  image         String?
-  verified      Boolean?
+  email         String    @unique
   emailVerified DateTime?
-  email         String   @unique
-  posts         Post[]
-  following     Follows[] @relation("following")
-  followers     Follows[] @relation("follower")
+  password      String?
+  profileID     Int?
+  profile       Profile?  @relation(fields: [profileID], references: [id])
   accounts      Account[]
   sessions      Session[]
 }
