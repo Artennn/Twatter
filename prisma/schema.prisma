@@ -21,6 +21,41 @@ model Post {
   parentPostID String?
   parent       Post?       @relation("comments", fields: [parentPostID], references: [id])
   comments     Post[]      @relation("comments")
+  savedBy      SavedPost[]
+  mentios      Mention[]
+}
+
+enum SavedPostType {
+  LIKE
+  RETWEET
+}
+
+model SavedPost {
+  profileID Int
+  profile   Profile       @relation(fields: [profileID], references: [id])
+  postID    String
+  post      Post          @relation(fields: [postID], references: [id])
+  type      SavedPostType
+
+  @@id([profileID, postID])
+}
+
+model Mention {
+  postID    String
+  post      Post    @relation(fields: [postID], references: [id])
+  profileID Int
+  profile   Profile @relation(fields: [profileID], references: [id])
+
+  @@id([postID, profileID])
+}
+
+model Follows {
+  followerID  Int
+  follower    Profile @relation("follower", fields: [followerID], references: [id])
+  followingID Int
+  following   Profile @relation("following", fields: [followingID], references: [id])
+
+  @@id([followerID, followingID])
 }
 
 model Profile {
@@ -33,6 +68,10 @@ model Profile {
   admin       Boolean?
   user        User[]
   posts       Post[]
+  savedPosts  SavedPost[]
+  mentions    Mention[]
+  followers   Follows[]   @relation("following")
+  following   Follows[]   @relation("follower")
 }
 
 //Necessary for Next auth
