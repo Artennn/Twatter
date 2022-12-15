@@ -9,7 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { TypeOf, z } from "zod";
 
 import { AuthLayout } from "./Layouts";
-import { ControlledTextField } from "../Inputs";
+import { ControlledTextField } from "components/Inputs";
 
 const validateForm = z.object({
     email: z.string().email("Niepoprawny adres email").endsWith("@pollub.edu.pl", "Niedozwolona domena"),

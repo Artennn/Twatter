@@ -1,4 +1,4 @@
-import { Box, Button, Stack, IconButton, Paper, SvgIcon, TextField, Typography } from "@mui/material";
+import { Box, Button, Stack, IconButton, SvgIcon, Typography } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 
 import { AuthLayout } from "./Layouts";

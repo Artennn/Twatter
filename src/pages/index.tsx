@@ -1,31 +1,35 @@
-import { type NextPage } from "next";
-import Link from "next/link";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { GetServerSideProps, type NextPage } from "next";
+import { getSession } from "next-auth/react";
 
-import { trpc } from "../utils/trpc";
-import { Button } from "@mui/material";
+import { Box } from "@mui/material";
+import SideBar from "../components/SideBar";
+import Feed from "../components/Feed";
+import Trending from "../components/Trending";
 
 const Home: NextPage = () => {
-  const { data: sessionData } = useSession();
-
-  /* const { data: secretMessage } = trpc.auth.getSecretMessage.useQuery(
-    undefined, // no input
-    { enabled: sessionData?.user !== undefined },
-  ); */
-
-  if (!sessionData?.user) {
-    return (
-      <>
-        <Button onClick={() => signIn()}> Zaloguj sie </Button>
-      </>
-    )
-  }
 
   return (
-    <>
-      <pre> { JSON.stringify(sessionData, null, 2) } </pre>
-      <Button onClick={() => signOut()}> Wyloguj sie </Button>
-    </>
+    <Box sx={{ display: "flex", flexDirection: "row", width: "100%" }} >
+      <SideBar />
+      <Feed />
+      <Trending />
+    </Box>
   );
 };
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const session = await getSession(ctx);
+  if (!session?.user.profileID) {    
+      return {
+        redirect: {
+            destination: "/login",
+            permanent: false,
+        }
+      }
+  }
+  return {
+    props: {},
+  }
+}
+
 export default Home;

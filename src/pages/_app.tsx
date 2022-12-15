@@ -4,7 +4,9 @@ import { SessionProvider } from "next-auth/react";
 
 import { trpc } from "../utils/trpc";
 
-import { CssBaseline } from "@mui/material";
+import { CssBaseline, ThemeProvider } from "@mui/material";
+import { darkTheme } from "../utils/theme";
+
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -12,10 +14,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      <CssBaseline />
-      <Component {...pageProps} />
+      <ThemeProvider theme={darkTheme}>
+        <CssBaseline />
+        <Component {...pageProps} />
+      </ThemeProvider>
     </SessionProvider>
   );
 };
-
 export default trpc.withTRPC(MyApp);
