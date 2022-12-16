@@ -2,6 +2,21 @@ import { router, publicProcedure, protectedProcedure } from "../trpc";
 
 import { z } from "zod";
 
+export const includeFullPost = { 
+    owner: true, 
+    _count: { 
+        select: { 
+            comments: true 
+        }
+    }
+};
+
+export const includeFullParent = {
+    parent: {
+        include: includeFullPost,
+    }
+}
+
 export const postRouter = router({
     get: publicProcedure
         .input(z.object({
@@ -10,8 +25,8 @@ export const postRouter = router({
         .query(async ({ input, ctx}) => {
             const { id } = input;
             const result = await ctx.prisma.post.findUnique({ 
+                include: includeFullPost,
                 where: { id: id },
-                include: { owner: true }
             });
             return result;
         }),
@@ -25,7 +40,7 @@ export const postRouter = router({
             const { createdBy, parentID } = input;
             if (typeof createdBy === "string") {
                 const result = await ctx.prisma.post.findMany({ 
-                    include: { owner: true },
+                    include: includeFullPost,
                     orderBy: { createdAt: "desc" },
                     where: {
                         owner: {
@@ -37,7 +52,7 @@ export const postRouter = router({
             }
             if (parentID) {
                 const result = await ctx.prisma.post.findMany({ 
-                    include: { owner: true },
+                    include: includeFullPost,
                     orderBy: { createdAt: "desc" },
                     where: {
                         parentPostID: parentID,
@@ -46,7 +61,7 @@ export const postRouter = router({
                 return result
             }
             const result = await ctx.prisma.post.findMany({
-                include: { owner: true },
+                include: includeFullPost,
                 orderBy: { createdAt: "desc" },
                 where: {
                     parentPostID: null,
@@ -61,12 +76,9 @@ export const postRouter = router({
         .query(async ({ input, ctx}) => {
             const { username } = input;
             return await ctx.prisma.post.findMany({
-                include: { owner: true, 
-                    parent: {
-                        include: {
-                            owner: true,
-                        }
-                    }   
+                include: { 
+                    ...includeFullPost,
+                    ...includeFullParent,
                 },
                 orderBy: { createdAt: "desc" },
                 where: {
@@ -79,13 +91,43 @@ export const postRouter = router({
                 }
             });
         }),
+    getFeed: protectedProcedure
+        .query(async ({ ctx }) => {
+            const { profileID } = ctx.session.user;
+            if (!profileID) return undefined;
+            const result = await ctx.prisma.profile.findUnique({
+                where: { id: ctx.session.user.profileID },
+                select: { 
+                    following: {
+                        select: {
+                            followingID: true,
+                        }
+                    }
+                }
+            })
+            if (!result?.following) return [];
+            return await ctx.prisma.post.findMany({
+                include: {
+                    ...includeFullPost,
+                    ...includeFullParent
+                },
+                orderBy: { createdAt: "desc" },
+                where: { 
+                    owner: {
+                        id: {
+                            in: [...result.following.map(user => user.followingID), profileID],
+                        }
+                    }
+                },
+            })
+        }),
     create: protectedProcedure
         .input(z.object({
             content: z.string(),
             parentID: z.string().optional(),
         }))
         .mutation(async ({ input, ctx }) => {
-            if (!ctx.session.user.profileID) return null;
+            if (!ctx.session.user.profileID) return undefined;
             const { content, parentID } = input;
             await ctx.prisma.post.create({
                 data: {

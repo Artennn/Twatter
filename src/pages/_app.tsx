@@ -5,8 +5,8 @@ import { SessionProvider } from "next-auth/react";
 import { trpc } from "../utils/trpc";
 
 import { CssBaseline, ThemeProvider } from "@mui/material";
-import { darkTheme } from "../utils/theme";
 
+import { darkTheme, GlobalStyles } from "../utils/theme";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -16,6 +16,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
     <SessionProvider session={session}>
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
+        <GlobalStyles />
         <Component {...pageProps} />
       </ThemeProvider>
     </SessionProvider>

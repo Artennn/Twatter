@@ -112,7 +112,7 @@ export function requestWrapper(
             },
         },
         secret: env.NEXTAUTH_SECRET,
-        debug: true,
+        //debug: true,
         providers: [
             GoogleProvider({
                 clientId: env.GOOGLE_CLIENT_ID,

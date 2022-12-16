@@ -17,15 +17,14 @@ export const authRouter = router({
 
             if (!account.id) return false;
 
-            await ctx.prisma.user.update({
+            return !!await ctx.prisma.user.update({
                 where: {
                     id: ctx.session.user.authID,
                 },
                 data: {
                     profileID: account.id,
                 }
-            })
-            return true;
+            });
         }),
     createLoginMethod: publicProcedure
         .input(LoginValidation)

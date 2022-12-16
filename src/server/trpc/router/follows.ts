@@ -3,6 +3,23 @@ import { router, publicProcedure, protectedProcedure } from "../trpc";
 import { z } from "zod";
 
 export const followsRouter = router({
+    /* getStats: publicProcedure
+        .input(z.object({
+            username: z.string(),
+        }))
+        .query(async ({ input, ctx }) => {
+            return await ctx.prisma.profile.findUnique({
+                where: { username: input.username },
+                select: {
+                    _count: {
+                        select: {
+                            followers: true,
+                            following: true,
+                        }
+                    }
+                }
+            })
+        }), */
     isFollowing: protectedProcedure
         .input(z.object({
             username: z.string(),
@@ -24,7 +41,7 @@ export const followsRouter = router({
         .input(z.number())
         .mutation(async ({ input, ctx}) => {
             const { profileID } = ctx.session.user;
-            if (!profileID) return null;
+            if (!profileID) return undefined;
             return !!await ctx.prisma.follows.create({
                 data: {
                     followerID: profileID,
@@ -36,7 +53,7 @@ export const followsRouter = router({
         .input(z.number())
         .mutation(async ({ input, ctx}) => {
             const { profileID } = ctx.session.user;
-            if (!profileID) return null;
+            if (!profileID) return undefined;
             return !!await ctx.prisma.follows.delete({
                 where: {
                     followerID_followingID: {

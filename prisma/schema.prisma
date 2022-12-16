@@ -25,17 +25,13 @@ model Post {
   mentios      Mention[]
 }
 
-enum SavedPostType {
-  LIKE
-  RETWEET
-}
-
 model SavedPost {
   profileID Int
   profile   Profile       @relation(fields: [profileID], references: [id])
   postID    String
   post      Post          @relation(fields: [postID], references: [id])
-  type      SavedPostType
+  like      Boolean?
+  retweet   Boolean?
 
   @@id([profileID, postID])
 }

@@ -11,6 +11,8 @@ import { MouseEvent } from 'react';
 import { Post, Profile } from "@prisma/client";
 
 import { ProfileAvatar } from "./Misc";
+import { trpc } from "utils/trpc";
+import { useSession } from "next-auth/react";
 
 const getHour = (date: Date) => {
     let text = date.toLocaleString();
@@ -24,12 +26,16 @@ const PostPreview = ({
 }: {
     data: Post & {
         owner: Profile,
+        _count: {
+            comments: number,
+        }
     },
     parentOwner?: Profile,
     hasReply?: boolean
 }) => {
     const router = useRouter();
-    let { content, likes, retweets, createdAt, owner } = data;
+    const { data: sessionData } = useSession();
+    let { id, content, likes, retweets, createdAt, owner } = data;
 
     const images = content.match(/(https?:\/\/.*\.(?:png|jpg))/);
     content = content.replaceAll(/(https?:\/\/.*\.(?:png|jpg))/g, "");
@@ -43,6 +49,28 @@ const PostPreview = ({
 
     const handleOpenPost = () => {
         router.push(`/post/${data.id}`)
+    }
+
+    const queryUtils = trpc.useContext();
+    const { comments } = data._count;
+    const { data: savedPostData } = trpc.savedPost.getByPost.useQuery(id);
+    const { mutate: savedPostsMutate } = trpc.savedPost.set.useMutation();
+
+    const handleSavePost = (e: MouseEvent<HTMLElement> ,type: "like" | "retweet") => {
+        e.stopPropagation();
+        if (sessionData?.user.profileID === owner.id) return;
+        savedPostsMutate({
+            postID: id,
+            like: (type === "like")? !savedPostData?.like : undefined,
+            retweet: (type === "retweet")? !savedPostData?.retweet : undefined,
+        }, { onSuccess: () => {
+            queryUtils.post.invalidate();
+            queryUtils.savedPost.invalidate();
+        }})
+    }
+
+    const handleOpenOptions = (e: MouseEvent<HTMLElement>) => {
+        e.stopPropagation();
     }
 
     return (
@@ -72,7 +100,7 @@ const PostPreview = ({
                             </Typography>
                             <Typography> {getHour(createdAt)} </Typography>
 
-                            <IconButton sx={{ ml: "auto" }}>
+                            <IconButton sx={{ ml: "auto" }} onClick={handleOpenOptions} >
                                 <MoreHorizIcon fontSize="small" />
                             </IconButton>
                         </Stack>
@@ -86,7 +114,7 @@ const PostPreview = ({
                             </Stack>
                         }
 
-                        <Typography whiteSpace="pre-line">
+                        <Typography whiteSpace="pre-line" mt={parentOwner? 1 : 0}>
                             {content}
                         </Typography>
 
@@ -107,18 +135,24 @@ const PostPreview = ({
                                 <IconButton>
                                     <ChatBubbleIcon fontSize="small" />
                                 </IconButton>
-                                <Typography> {1} </Typography>
+                                <Typography> {comments} </Typography>
                             </Stack>
 
                             <Stack direction="row" alignItems="center">
-                                <IconButton>
+                                <IconButton
+                                    color={savedPostData?.retweet && "success" || "default"}
+                                    onClick={(e: MouseEvent<HTMLElement>) => handleSavePost(e, "retweet")} 
+                                >
                                     <RepeatIcon fontSize="small" />
                                 </IconButton>
                                 <Typography> {retweets} </Typography>
                             </Stack>
 
                             <Stack direction="row" alignItems="center">
-                                <IconButton>
+                                <IconButton
+                                    color={savedPostData?.like && "error" || "default"}
+                                    onClick={(e: MouseEvent<HTMLElement>) => handleSavePost(e, "like")} 
+                                >
                                     <FavoriteIcon fontSize="small" />
                                 </IconButton>
                                 <Typography> {likes} </Typography>

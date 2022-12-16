@@ -34,14 +34,21 @@ const ListItem = ({
 
     return (
         <ButtonBase 
-            component="div" 
-            sx={{ width: "100%", justifyContent: "left", }}
+            component="div"
+            sx={{ 
+                width: "100%", 
+                borderRadius: 10,
+                justifyContent: "left", 
+                mb: 1.5,
+                "&:hover": {
+                    bgcolor: "rgba(230, 230, 230, 0.1)",
+                }
+            }}
             onClick={() => onClick(url)}
         >
             <Stack 
                 direction="row" 
                 p={1} 
-                mb={1.5} 
                 sx={{ opacity: selected? 1.0 : 0.7 }}
             >
                 <Badge 

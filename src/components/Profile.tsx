@@ -1,12 +1,10 @@
-import { useState } from "react";
-
 import { Avatar, Box, Button, IconButton, Tab, Tabs, Typography } from "@mui/material";
 import { Stack } from "@mui/system";
 import { Profile } from "@prisma/client";
 
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import PendingIcon from '@mui/icons-material/Pending';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
 import { useRouter } from "next/router";
 import { ProfileTab } from "pages/profile/[...all]";
@@ -18,7 +16,12 @@ const Profile = ({
     handleFollow,
     tab
 }: {
-    profile: Profile,
+    profile: Profile & {
+        _count: {
+            following: number,
+            followers: number,
+        },
+    },
     isOwner?: boolean,
     following?: boolean,
     handleFollow: () => void,
@@ -58,6 +61,7 @@ const Profile = ({
                 <IconButton>
                     <PendingIcon />
                 </IconButton>
+
                 {isOwner 
                     ? <Button variant="outlined">
                         Edytuj profil
@@ -68,11 +72,21 @@ const Profile = ({
                 }
             </Stack>
 
-            <Stack direction="column" p={2} mt={3}>
-                <Typography fontSize={20} fontWeight={700} > {profile.displayName} </Typography>
+            <Stack direction="column" p={2} mt={3} color="grey">
+                <Typography fontSize={20} fontWeight={700} color="white"> {profile.displayName} </Typography>
                 <Typography variant="subtitle2" mb={2}> {"@" + profile.username} </Typography>
 
-                <Typography>Joined June 2009</Typography>
+                <Stack direction="row">
+                    <CalendarMonthIcon fontSize="small"/>
+                    <Typography variant="subtitle2" ml={1}>Joined June 2009</Typography>
+                </Stack>
+
+                <Stack direction="row" mt={1}>
+                    <Typography variant="subtitle2" color="white" ml={0.5}> {profile._count.following} </Typography>
+                    <Typography variant="subtitle2" ml={0.75}> Following </Typography>
+                    <Typography variant="subtitle2" color="white" ml={2}> {profile._count.followers} </Typography>
+                    <Typography variant="subtitle2" ml={0.75}> Followers </Typography>
+                </Stack>
             </Stack>
 
             <Tabs centered value={tab} sx={{

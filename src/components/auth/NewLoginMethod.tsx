@@ -8,6 +8,7 @@ import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TypeOf, z } from "zod";
 import { ControlledTextField } from "../Inputs";
+import { useRouter } from "next/router";
 
 export const LoginValidation = z.object({
     email: z.string().email("Niepoprawny adres email").endsWith("@pollub.edu.pl", "Niedozwolona domena"),
@@ -22,6 +23,8 @@ export const LoginValidation = z.object({
 export type LoginMethod = TypeOf<typeof LoginValidation>
 
 export const NewLoginMethod = ({ handleCreate } : { handleCreate: (data: LoginMethod) => void }) => {
+    const router = useRouter();
+
     const formMethodes = useForm<LoginMethod>({
         resolver: zodResolver(LoginValidation),
         mode: "onTouched"
@@ -35,7 +38,7 @@ export const NewLoginMethod = ({ handleCreate } : { handleCreate: (data: LoginMe
 
     return (
         <AuthLayout>
-            <IconButton sx={{ position: 'absolute', top: 8, left: 8 }}>
+            <IconButton sx={{ position: 'absolute', top: 8, left: 8 }} onClick={() => router.push("/login")}>
                 <CloseIcon fontSize="large" />
             </IconButton>
 

@@ -30,6 +30,7 @@ const ProfilePage: NextPage<{ profileName: string, profileTab: ProfileTab }> = (
 
     const isOwner = profile?.id === sessionData?.user.profileID;
 
+    //const replies2 = replies?.filter((reply): reply is  => reply.parent !== null);
     console.log({replies});
 
     const handleFollow = () => {
@@ -37,7 +38,7 @@ const ProfilePage: NextPage<{ profileName: string, profileTab: ProfileTab }> = (
         const mutate = isFollowing ? unFollowMutate : followMutate;
         mutate(profile.id, {
             onSuccess: () => {
-                queryUtils.profile.get.invalidate();
+                queryUtils.follows.invalidate();
             }
         })
     }
@@ -63,11 +64,13 @@ const ProfilePage: NextPage<{ profileName: string, profileTab: ProfileTab }> = (
                     <PostPreview data={post} key={key} />
                 ))}
                 
-                {profileTab === "replies" && replies?.map((reply, key) => (
-                    <>
+                {profileTab === "replies" && replies?.map((reply, key) => ( 
+                    <React.Fragment key={key}>
+                        {/* 
+                        //@ts-ignore */}
                         <PostPreview data={reply.parent} hasReply />
                         <PostPreview data={reply} parentOwner={reply.owner} />
-                    </>
+                    </React.Fragment>
                 ))}
             </Box>
             <Trending />

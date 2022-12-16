@@ -26,7 +26,7 @@ export const ProfileAvatar = ({
                 src={image}
                 alt="profile-pic"
                 onClick={handleOpenProfile}
-                sx={{ height: 48, width: 48, mt: linePos !== "bottom"? 0 : 1 }}
+                sx={{ height: 48, width: 48, mt: linePos === "top"? 0 : 1 }}
             />
             {linePos === "bottom" &&
                 <Box sx={{

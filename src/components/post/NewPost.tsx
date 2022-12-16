@@ -25,6 +25,12 @@ const NewPost = ({ parentID } : { parentID?: string }) => {
     const [content, setContent] = useState("");
     const length = content.length;
 
+    const handleSetContent = (e: ChangeEvent<HTMLInputElement>) => {
+        const { value } = e.target;
+        if (value.length > POST_MAX_LENGTH) return;
+        setContent(value);
+    }
+
     const handleCreatePost = () => {
         const newPost = {
             content,
@@ -32,8 +38,7 @@ const NewPost = ({ parentID } : { parentID?: string }) => {
         }
         postMutation.mutate(newPost, {
             onSuccess: () => {
-                queryUtils.post.get.invalidate();
-                queryUtils.post.getMany.invalidate();
+                queryUtils.post.invalidate();
                 setContent("");
             },
         });
@@ -52,7 +57,7 @@ const NewPost = ({ parentID } : { parentID?: string }) => {
                             fullWidth 
                             placeholder={parentID? "Tweet your reply" : "What's happening?"}
                             value={content}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => setContent(e.target.value)}
+                            onChange={handleSetContent}
                         />
                         <Stack direction="row" marginTop={1}>
                             <IconButton>
@@ -77,15 +82,24 @@ const NewPost = ({ parentID } : { parentID?: string }) => {
                                 value={length / POST_MAX_LENGTH * 100} 
                                 sx={{ alignSelf: "center", ml: "auto" }} 
                             />
+
+                            {length > 0 && <Typography ml={1} variant="subtitle2" alignSelf="center">{`${length}/${POST_MAX_LENGTH}`}</Typography>}
+
                             <IconButton>
                                 <AddCircleIcon fontSize="small" />
                             </IconButton>
                             <Button 
                                 variant="contained" 
                                 size="small" 
-                                sx={{ borderRadius: 5, color: "white", ":disabled": {
-                                    opacity: 0.5,
-                                } }}
+                                sx={{ 
+                                    borderRadius: 5, 
+                                    color: "white", 
+                                    ":disabled": {
+                                        opacity: 0.5,
+                                        backgroundColor: "primary.main",
+                                        color: "white",
+                                    } 
+                                }}
                                 disabled={length < 1}
                                 onClick={handleCreatePost}
                             >

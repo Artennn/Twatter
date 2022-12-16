@@ -2,6 +2,15 @@ import { router, publicProcedure, protectedProcedure } from "../trpc";
 
 import { z } from "zod";
 
+const includeProfileStats = {
+    _count: {
+        select: {
+            followers: true,
+            following: true,
+        }
+    }
+}
+
 export const profileRouter = router({
     get: protectedProcedure
         .input(z.object({
@@ -11,9 +20,10 @@ export const profileRouter = router({
         .query(async ({ input, ctx}) => {
             const { id, username } = input;
             const { profileID } = ctx.session.user;
-            if (!profileID) return null;
+            if (!profileID) return undefined;
             if (id) {
-                return await ctx.prisma.profile.findUnique({ 
+                return await ctx.prisma.profile.findUnique({
+                    include: includeProfileStats,
                     where: { 
                         id: id 
                     },
@@ -21,11 +31,12 @@ export const profileRouter = router({
             }
             if (username) {
                 return await ctx.prisma.profile.findUnique({ 
+                    include: includeProfileStats,
                     where: { 
                         username: username 
                     },
                 });
             }
-            return null;
+            return undefined;
         }),
 });
