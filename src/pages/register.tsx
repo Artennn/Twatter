@@ -1,5 +1,5 @@
 import { GetServerSideProps, type NextPage } from "next";
-import { getSession, signIn } from "next-auth/react";
+import { getSession, signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 
 import { NewLoginMethod, LoginMethod } from "../components/auth/NewLoginMethod";
@@ -24,7 +24,11 @@ const RegisterPage: NextPage<{ authed: boolean }> = ({ authed }) => {
 
     const handleCreateAccount = async (data: Account) => {
         accountMutation.mutate(data, {
-            onSuccess: () => router.push("/"),
+            onSuccess: async () => {
+                // force the client session to update
+                document.dispatchEvent(new Event("visibilitychange"));
+                router.push("/");
+            }
         });
     }
 
