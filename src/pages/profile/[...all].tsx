@@ -20,8 +20,8 @@ const ProfilePage: NextPage<{ profileName: string, profileTab: ProfileTab }> = (
 
     const { data: posts } =  trpc.post.getMany.useQuery({ createdBy: profileName }, { enabled: profileTab === "" });
     const { data: replies } =  trpc.post.getReplies.useQuery({ username: profileName }, { enabled: profileTab === "replies" });
-    const { data: media } =  trpc.post.getMany.useQuery({ createdBy: profileName }, { enabled: profileTab === "media" });
-    const { data: likes } =  trpc.post.getMany.useQuery({ createdBy: profileName }, { enabled: profileTab === "likes" });
+    const { data: retweeted } =  trpc.post.getSaved.useQuery({ username: profileName, retweeted: true }, { enabled: profileTab === "retweets" });
+    const { data: liked } =  trpc.post.getSaved.useQuery({ username: profileName, liked: true }, { enabled: profileTab === "likes" });
 
     const { data: isFollowing } = trpc.follows.isFollowing.useQuery({ username: profileName });
 
@@ -39,6 +39,7 @@ const ProfilePage: NextPage<{ profileName: string, profileTab: ProfileTab }> = (
         mutate(profile.id, {
             onSuccess: () => {
                 queryUtils.follows.invalidate();
+                queryUtils.profile.invalidate();
             }
         })
     }
@@ -72,6 +73,14 @@ const ProfilePage: NextPage<{ profileName: string, profileTab: ProfileTab }> = (
                         <PostPreview data={reply} parentOwner={reply.owner} />
                     </React.Fragment>
                 ))}
+
+                {profileTab === "retweets" && retweeted?.map((post, key) => (
+                    <PostPreview data={post} key={key} />
+                ))}
+
+                {profileTab === "likes" && liked?.map((post, key) => (
+                    <PostPreview data={post} key={key} />
+                ))}
             </Box>
             <Trending />
         </Box>
@@ -81,7 +90,7 @@ const ProfilePage: NextPage<{ profileName: string, profileTab: ProfileTab }> = (
 const ProfileTabs = [
     "",
     "replies",
-    "media",
+    "retweets",
     "likes",
 ] as const;
 

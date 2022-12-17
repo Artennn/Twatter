@@ -91,6 +91,30 @@ export const postRouter = router({
                 }
             });
         }),
+    getSaved: protectedProcedure
+        .input(z.object({
+            username: z.string(),
+            liked: z.boolean().optional(),
+            retweeted: z.boolean().optional(),
+        }))
+        .query(async ({ input, ctx }) => {
+            const { username, liked, retweeted } = input;
+            return await ctx.prisma.post.findMany({
+                include: includeFullPost,
+                orderBy: { createdAt: "desc" },
+                where: {
+                    savedBy: {
+                        some: {
+                            like: liked,
+                            retweet: retweeted,
+                            profile: {
+                                username: input.username,
+                            }
+                        }
+                    }
+                }
+            });
+        }),
     getFeed: protectedProcedure
         .query(async ({ ctx }) => {
             const { profileID } = ctx.session.user;

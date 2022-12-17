@@ -1,6 +1,6 @@
 import { Avatar, Box, Button, IconButton, Tab, Tabs, Typography } from "@mui/material";
 import { Stack } from "@mui/system";
-import { Profile } from "@prisma/client";
+import { Profile as ProfileDB } from "@prisma/client";
 
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import PendingIcon from '@mui/icons-material/Pending';
@@ -16,7 +16,7 @@ const Profile = ({
     handleFollow,
     tab
 }: {
-    profile: Profile & {
+    profile: ProfileDB & {
         _count: {
             following: number,
             followers: number,
@@ -96,7 +96,7 @@ const Profile = ({
             }}>
                 <Tab value="" label="Tweets" component="a" onClick={() => handleSwitchTab("")} />
                 <Tab value="replies" label="Replies" component="a" onClick={() => handleSwitchTab("replies")} />
-                <Tab value="media" label="Media" component="a" onClick={() => handleSwitchTab("media")} />
+                <Tab value="retweets" label="Retweets" component="a" onClick={() => handleSwitchTab("retweets")} />
                 <Tab value="likes" label="Likes" component="a" onClick={() => handleSwitchTab("likes")} />
             </Tabs>
         </Stack>
