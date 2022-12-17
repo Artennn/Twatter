@@ -1,4 +1,4 @@
-import { Avatar, Badge, Box, ButtonBase, IconButton, Stack, SvgIcon, Typography, useMediaQuery } from "@mui/material";
+import { Avatar, Badge, Box, ButtonBase, IconButton, Skeleton, Stack, SvgIcon, Typography, useMediaQuery } from "@mui/material";
 
 import LogoutIcon from '@mui/icons-material/Logout';
 
@@ -76,7 +76,7 @@ const ListItem = ({
 const SideBar = () => {
     const router = useRouter();
     const { data: sessionData } = useSession(); 
-    const { data: userData } = trpc.profile.get.useQuery({ id: sessionData?.user.profileID});
+    const { data: userData, isLoading } = trpc.profile.get.useQuery({ id: sessionData?.user.profileID }, { enabled: !!sessionData?.user.profileID });
 
     const currentPage = router.asPath
 
@@ -151,11 +151,20 @@ const SideBar = () => {
                         />
 
                         <Stack direction="row" mt="auto" width="100%">
-                            <Avatar sx={{ height: 48, width: 48 }} src={userData?.image} />
+                            {!isLoading
+                                ? <Avatar sx={{ height: 48, width: 48 }} src={userData?.image} />
+                                : <Skeleton variant="circular" width={48} height={48} />
+                            }
 
                             <Stack direction="column" ml={2} mr="auto">
-                                <Typography> {userData?.displayName} </Typography>
-                                <Typography> {"@" + userData?.username} </Typography>
+                                {!isLoading
+                                    ? <Typography> {userData?.displayName} </Typography>
+                                    : <Skeleton variant="text" width={100} />
+                                }
+                                {!isLoading
+                                    ? <Typography> {"@" + userData?.username} </Typography>
+                                    : <Skeleton variant="text" />
+                                }
                             </Stack>
 
                             <IconButton sx={{ mt: "auto", mb: "auto" }} onClick={() => signOut()}>

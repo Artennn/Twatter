@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 import { GetServerSideProps, NextPage } from "next";
 import { getSession, useSession } from "next-auth/react";
 
@@ -16,9 +16,10 @@ const ProfilePage: NextPage<{ profileName: string, profileTab: ProfileTab }> = (
     const queryUtils = trpc.useContext();
     const { data: sessionData } = useSession();
 
-    const { data: profile } = trpc.profile.get.useQuery({ username: profileName });
+    const { data: profile, isLoading } = trpc.profile.get.useQuery({ username: profileName });
 
-    const { data: posts } =  trpc.post.getMany.useQuery({ createdBy: profileName }, { enabled: profileTab === "" });
+    // not disabled because of posts.length, should prob make a separate query
+    const { data: posts } =  trpc.post.getMany.useQuery({ createdBy: profileName });
     const { data: replies } =  trpc.post.getReplies.useQuery({ username: profileName }, { enabled: profileTab === "replies" });
     const { data: retweeted } =  trpc.post.getSaved.useQuery({ username: profileName, retweeted: true }, { enabled: profileTab === "retweets" });
     const { data: liked } =  trpc.post.getSaved.useQuery({ username: profileName, liked: true }, { enabled: profileTab === "likes" });
@@ -29,9 +30,6 @@ const ProfilePage: NextPage<{ profileName: string, profileTab: ProfileTab }> = (
     const { mutate: unFollowMutate } = trpc.follows.unFollow.useMutation();
 
     const isOwner = profile?.id === sessionData?.user.profileID;
-
-    //const replies2 = replies?.filter((reply): reply is  => reply.parent !== null);
-    console.log({replies});
 
     const handleFollow = () => {
         if (!profile || isFollowing === undefined) return;
@@ -48,8 +46,11 @@ const ProfilePage: NextPage<{ profileName: string, profileTab: ProfileTab }> = (
         <Box sx={{ display: "flex", flexDirection: "row", width: "100%" }}>
             <SideBar />
             <Box width="100%" maxWidth={600} height="100%" bgcolor="common.black">
-                <NavBar goBack title={profile?.displayName} subtitle="12K Tweets" />
-                {profile ? (
+                <NavBar goBack title={profile?.displayName} subtitle={`${posts?.length} Tweets`} />
+
+                {isLoading && <CircularProgress />}
+                {!isLoading && !profile && "No profile found :("}
+                {!isLoading && profile && (
                     <Profile
                         profile={profile}
                         isOwner={isOwner}
@@ -57,8 +58,6 @@ const ProfilePage: NextPage<{ profileName: string, profileTab: ProfileTab }> = (
                         handleFollow={handleFollow}
                         tab={profileTab}
                     />
-                ) : (
-                    "No profile found"
                 )}
 
                 {profileTab === "" && posts?.map((post, key) => (
