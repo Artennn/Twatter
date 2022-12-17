@@ -50,7 +50,7 @@ const Post = ({
 
                     <Stack direction="column" mt="auto">
                         <Typography> {owner.displayName} </Typography>
-                        <Typography color="grey" onClick={handleOpenProfile}>
+                        <Typography color="text.dark" onClick={handleOpenProfile}>
                             {"@" + owner.username}
                         </Typography>
                     </Stack>
@@ -62,8 +62,8 @@ const Post = ({
 
                 {parentOwner &&
                     <Stack direction="row" marginTop={1}>
-                        <Typography color="grey"> Replying to </Typography>
-                        <Typography color="grey" ml={1} onClick={handleOpenProfile}>
+                        <Typography color="text.dark"> Replying to </Typography>
+                        <Typography color="text.dark" ml={1} onClick={handleOpenProfile}>
                             {"@" + parentOwner?.username}
                         </Typography>
                     </Stack>
@@ -85,7 +85,7 @@ const Post = ({
                     : null
                 }
 
-                <Typography color="grey" mt={2} mb={2}> 10:22 PM · Dec 14, 2022 </Typography>
+                <Typography color="text.dark" mt={2} mb={2}> 10:22 PM · Dec 14, 2022 </Typography>
 
                 <Stack direction="row" spacing={3} pt={2} pb={2} borderTop="1px solid grey" borderBottom="1px solid grey">
                     <Typography>{retweets} Retweets</Typography>

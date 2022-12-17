@@ -16,6 +16,12 @@ const styles = {
 
 export const GlobalStyles = () => <GlobalStylesMUI styles={styles} />;
 
+declare module '@mui/material/styles' {
+    export interface TypeText {
+        dark: string,
+    }
+}
+
 export const darkTheme = createTheme({
     palette: {
         mode: "dark",
@@ -26,7 +32,8 @@ export const darkTheme = createTheme({
             main: '#FFFFFF'
         },
         text: {
-            secondary: "rgb(113, 118, 123)",
+            secondary: "rgb(29, 155, 240)",
+            dark: "rgb(113, 118, 123)",
         },
         action: {
             // doesnt apply (atleast to buttons)
