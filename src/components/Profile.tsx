@@ -1,13 +1,15 @@
-import { Avatar, Box, Button, IconButton, Tab, Tabs, Typography } from "@mui/material";
-import { Stack } from "@mui/system";
+import { Avatar, Box, Stack, Button, IconButton, Tab, Tabs, Typography } from "@mui/material";
 import { Profile as ProfileDB } from "@prisma/client";
 
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import PendingIcon from '@mui/icons-material/Pending';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
+import { EditProfileDialog } from "./dialogs/EditProfile";
+
 import { useRouter } from "next/router";
 import { ProfileTab } from "pages/profile/[...all]";
+import { useState } from "react";
 
 const Profile = ({
     profile,
@@ -28,16 +30,21 @@ const Profile = ({
     tab: ProfileTab,
 }) => {
     const router = useRouter();
+    const [showDialog, setShowDialog] = useState(false);
 
     const handleSwitchTab = (tab: ProfileTab) => {
         router.push(`/profile/${profile.username}/${tab}`, undefined, { scroll: false });
+    }
+
+    const handleToggleDialog = () => {
+        setShowDialog(!showDialog);
     }
 
     return (
         <Stack direction="column" border="1px grey solid" borderTop="none">
             <Box height={170}>
                 <img
-                    src={"https://pbs.twimg.com/profile_banners/44196397/1576183471/600x200"}
+                    src={profile.background || "https://pbs.twimg.com/profile_banners/44196397/1576183471/600x200"}
                     style={{ height: "100%", width: "100%", objectFit: "cover" }}
                     title="profile-picture"
                 />
@@ -63,7 +70,7 @@ const Profile = ({
                 </IconButton>
 
                 {isOwner 
-                    ? <Button variant="outlined">
+                    ? <Button variant="outlined" onClick={handleToggleDialog}>
                         Edytuj profil
                     </Button>
                     : <Button variant="outlined" onClick={handleFollow} >
@@ -71,6 +78,8 @@ const Profile = ({
                     </Button>
                 }
             </Stack>
+
+            {showDialog && <EditProfileDialog profile={profile} onClose={handleToggleDialog} />}
 
             <Stack direction="column" p={2} mt={3} color="text.dark">
                 <Typography fontSize={20} fontWeight={700} color="white"> {profile.displayName} </Typography>

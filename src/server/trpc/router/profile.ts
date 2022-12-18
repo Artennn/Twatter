@@ -1,6 +1,7 @@
 import { router, publicProcedure, protectedProcedure } from "../trpc";
 
 import { z } from "zod";
+import { EditProfileValidation } from "components/dialogs/EditProfile";
 
 const includeProfileStats = {
     _count: {
@@ -38,5 +39,21 @@ export const profileRouter = router({
                 });
             }
             return undefined;
+        }),
+    edit: protectedProcedure
+        .input(EditProfileValidation)
+        .mutation(async ({ input, ctx }) => {
+            const { profileID } = ctx.session.user;
+            if (!profileID) return false;
+            const { displayName, image } = input; 
+            const background = input.background === ""? undefined : input.background;
+            return !!await ctx.prisma.profile.update({
+                where: { id: profileID },
+                data: {
+                    displayName,
+                    image,
+                    background,
+                }
+            })
         }),
 });
