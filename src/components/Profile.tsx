@@ -30,7 +30,7 @@ const Profile = ({
     const router = useRouter();
 
     const handleSwitchTab = (tab: ProfileTab) => {
-        router.push(`/profile/${profile.username}/${tab}`);
+        router.push(`/profile/${profile.username}/${tab}`, undefined, { scroll: false });
     }
 
     return (
@@ -72,7 +72,7 @@ const Profile = ({
                 }
             </Stack>
 
-            <Stack direction="column" p={2} mt={3} color="grey">
+            <Stack direction="column" p={2} mt={3} color="text.dark">
                 <Typography fontSize={20} fontWeight={700} color="white"> {profile.displayName} </Typography>
                 <Typography variant="subtitle2" mb={2}> {"@" + profile.username} </Typography>
 
