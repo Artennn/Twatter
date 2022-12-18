@@ -26,10 +26,19 @@ const Trending = () => {
                 pb={3}
             >
                 <Typography fontSize={20} fontWeight={500} p={2}>Trends for you</Typography>
-                {trends.map(trend => (
-                    <Box width="100%" p={2} pb={1.5} pt={1.5} sx={{ cursor: "pointer", "&:hover": {
-                        bgcolor: "rgba(255, 255, 255, 0.03)",
-                    }}}>
+                {trends.map((trend, key) => (
+                    <Box 
+                        width="100%" 
+                        key={key} 
+                        p={2} 
+                        pb={1.5} pt={1.5} 
+                        sx={{ 
+                            cursor: "pointer", 
+                            "&:hover": {
+                                bgcolor: "rgba(255, 255, 255, 0.03)",
+                            }
+                        }}
+                    >
                         <Stack direction="column" position="relative">
                             <Typography variant="subtitle2" color="text.dark"> {trend[0]} </Typography>
                             <Typography variant="subtitle1"> {trend[1]} </Typography>

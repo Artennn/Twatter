@@ -27,8 +27,8 @@ const LoginPage: NextPage = ({}) => {
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const session = await getSession(ctx);
-    const isAuthed = session?.user.authID;
-    const hasProfile = session?.user.profileID? true : false;
+    const isAuthed = session?.user?.authID;
+    const hasProfile = session?.user?.profileID? true : false;
 
     if (hasProfile) {    
         return {

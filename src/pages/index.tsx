@@ -19,7 +19,7 @@ const Home: NextPage = () => {
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getSession(ctx);
-  if (!session?.user.profileID) {    
+  if (!session?.user?.profileID) {    
       return {
         redirect: {
             destination: "/login",

@@ -19,7 +19,7 @@ const NewPost = ({ parentID } : { parentID?: string }) => {
     const { data: sessionData } = useSession();
     const queryUtils = trpc.useContext();
     
-    const { data: profile } = trpc.profile.get.useQuery({ id: sessionData?.user.profileID })
+    const { data: profile } = trpc.profile.get.useQuery({ id: sessionData?.user?.profileID })
     const postMutation = trpc.post.create.useMutation();
 
     const [content, setContent] = useState("");

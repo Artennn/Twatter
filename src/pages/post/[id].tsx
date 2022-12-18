@@ -48,8 +48,8 @@ const PostPage: NextPage<{ postID: string }> = ({ postID }) => {
                 }
                 <Post data={post} parentOwner={parentPost?.owner} />
                 <NewPost parentID={postID} />
-                {comments?.map(comment => (
-                    <PostPreview data={comment} />
+                {comments?.map((comment, key) => (
+                    <PostPreview key={key} data={comment} />
                 ))}
             </Box>
             <Trending />
@@ -70,7 +70,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         } 
     }
 
-    if (!session?.user.profileID) {
+    if (!session?.user?.profileID) {
         return {
             redirect: {
                 destination: "/login",

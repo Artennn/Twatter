@@ -16,12 +16,12 @@ import { trpc } from "utils/trpc";
 import { useSession } from "next-auth/react";
 
 const getHour = (date: Date) => {
-    let text = date.toLocaleString();
+    const text = date.toLocaleString();
     return text.substring(text.length - 8, text.length - 3);
 }
 
 const getDate = (date: Date) => {
-    let text = date.toLocaleString();
+    const text = date.toLocaleString();
     return text.substring(0, text.length - 10);
 }
 
@@ -64,7 +64,7 @@ const Post = ({
     const handleSavePost = (e: MouseEvent<HTMLElement> ,type: "like" | "retweet") => {
         e.stopPropagation();
         // could do it on server
-        if (sessionData?.user.profileID === owner.id) return;
+        if (sessionData?.user?.profileID === owner.id) return;
         savedPostsMutate({
             postID: id,
             like: (type === "like")? !savedPostData?.like : undefined,
@@ -77,7 +77,7 @@ const Post = ({
 
     const handleOpenOptions = (e: MouseEvent<HTMLElement>) => {
         e.stopPropagation();
-        if (!sessionData?.user.isAdmin) return;
+        if (!sessionData?.user?.isAdmin) return;
         deletePostMutate({ id: id }, { onSuccess: () => {
             queryUtils.post.invalidate();
         }})
@@ -116,7 +116,7 @@ const Post = ({
                     </Stack>
 
                     <IconButton sx={{ m: "auto", mr: 0 }} onClick={handleOpenOptions} >
-                        {sessionData?.user.isAdmin 
+                        {sessionData?.user?.isAdmin 
                             ? <DeleteForeverIcon fontSize="small" color="error" />
                             : <MoreHorizIcon fontSize="small" />
                         }

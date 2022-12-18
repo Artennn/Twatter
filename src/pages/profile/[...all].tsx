@@ -29,7 +29,7 @@ const ProfilePage: NextPage<{ profileName: string, profileTab: ProfileTab }> = (
     const { mutate: followMutate } = trpc.follows.follow.useMutation();
     const { mutate: unFollowMutate } = trpc.follows.unFollow.useMutation();
 
-    const isOwner = profile?.id === sessionData?.user.profileID;
+    const isOwner = profile?.id === sessionData?.user?.profileID;
 
     const handleFollow = () => {
         if (!profile || isFollowing === undefined) return;
@@ -66,10 +66,12 @@ const ProfilePage: NextPage<{ profileName: string, profileTab: ProfileTab }> = (
                 
                 {profileTab === "replies" && replies?.map((reply, key) => ( 
                     <React.Fragment key={key}>
-                        {/* 
-                        //@ts-ignore */}
-                        <PostPreview data={reply.parent} hasReply />
-                        <PostPreview data={reply} parentOwner={reply.owner} />
+                        {reply.parent && (
+                            <>
+                                <PostPreview data={reply.parent} hasReply />
+                                <PostPreview data={reply} parentOwner={reply.owner} />
+                            </>
+                        )}
                     </React.Fragment>
                 ))}
 
@@ -96,7 +98,7 @@ const ProfileTabs = [
 export type ProfileTab = typeof ProfileTabs[number];
 
 const parseLink = (link: string | string[]) => {
-    let profileTab: ProfileTab = "";
+    const profileTab: ProfileTab = "";
 
     if (typeof link === "string") {
         return {
@@ -104,8 +106,7 @@ const parseLink = (link: string | string[]) => {
             profileTab,
         }
     }
-    //@ts-ignore
-    if (!link[1] || !ProfileTabs.includes(link[1])) {
+    if (!link[1] || !ProfileTabs.includes(link[1] as ProfileTab)) {
         return {
             profileName: link[0] as string,
             profileTab,
@@ -121,7 +122,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const session = await getSession(ctx);
     const { profileName, profileTab } = parseLink(ctx.query.all as string | string[]); 
 
-    if (!session?.user.profileID) {
+    if (!session?.user?.profileID) {
         return {
             redirect: {
                 destination: "/login",

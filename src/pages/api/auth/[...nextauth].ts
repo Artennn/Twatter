@@ -19,9 +19,7 @@ declare module "next-auth" {
         isAdmin?: boolean,
     }
     interface Session {
-        // known issue
-        //@ts-ignore
-        user: {
+        user?: {
             authID: string,
             profileID?: number,
             isAdmin?: boolean,
@@ -121,7 +119,7 @@ export function requestWrapper(
             GoogleProvider({
                 clientId: env.GOOGLE_CLIENT_ID,
                 clientSecret: env.GOOGLE_CLIENT_SECRET,
-                //@ts-ignore
+                
                 profile: (profile, tokens) => {
                     return {
                         id: profile.sub,

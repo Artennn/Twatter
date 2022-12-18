@@ -76,7 +76,7 @@ const ListItem = ({
 const SideBar = () => {
     const router = useRouter();
     const { data: sessionData } = useSession(); 
-    const { data: userData, isLoading } = trpc.profile.get.useQuery({ id: sessionData?.user.profileID }, { enabled: !!sessionData?.user.profileID });
+    const { data: userData, isLoading } = trpc.profile.get.useQuery({ id: sessionData?.user?.profileID }, { enabled: !!sessionData?.user?.profileID });
 
     const currentPage = router.asPath
 
