@@ -9,6 +9,7 @@ import { env } from "../../../env/server.mjs";
 import { NextApiRequest, NextApiResponse } from "next";
 import { decode, encode } from "next-auth/jwt";
 
+import bcrypt from "bcrypt";
 import { randomUUID } from "crypto";
 import Cookies from "cookies";
 
@@ -140,11 +141,11 @@ export function requestWrapper(
                             email: email,
                         },
                     });
-                    // TODO hash password
                     if (!user) return null;
                     if (user.password === null) return null;
-                    if (user.password !== password) return null;
-                    
+
+                    if (!bcrypt.compareSync(password, user.password)) return null;
+
                     // cast profileID to number | undefined from prisma type (number | null)
                     return { ...user, profileID: user.profileID? user.profileID : undefined };
                 },

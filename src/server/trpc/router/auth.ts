@@ -3,6 +3,10 @@ import { router, publicProcedure, protectedProcedure } from "../trpc";
 import { AccountValidation } from "../../../components/auth/NewAccount";
 import { LoginValidation } from "../../../components/auth/NewLoginMethod";
 
+import bcrypt from "bcrypt";
+
+const SALT_ROUNDS = 15;
+
 export const authRouter = router({
     createAccount: protectedProcedure
         .input(AccountValidation)
@@ -31,12 +35,14 @@ export const authRouter = router({
         .mutation(async ({ input, ctx }) => {
             // TODO bcrypt
             const { email, password, password2 } = input;
-            await ctx.prisma.user.create({ 
+            const hash = bcrypt.hashSync(password, SALT_ROUNDS);
+            const result = await ctx.prisma.user.create({ 
                 data: {
                     email,
-                    password,
+                    password: hash,
                 }
             });
+            return result;
         }),
 
 });
