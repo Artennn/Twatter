@@ -16,6 +16,7 @@ import Cookies from "cookies";
 declare module "next-auth" {
     interface User {
         profileID?: number,
+        isAdmin?: boolean,
     }
     interface Session {
         // known issue
@@ -23,6 +24,7 @@ declare module "next-auth" {
         user: {
             authID: string,
             profileID?: number,
+            isAdmin?: boolean,
         }
     }
 }
@@ -63,6 +65,7 @@ export function requestWrapper(
                     session.user = {
                         authID: user.id,
                         profileID: user.profileID,
+                        isAdmin: user.isAdmin,
                     }
                 }
                 return session;

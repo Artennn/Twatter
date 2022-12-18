@@ -160,5 +160,17 @@ export const postRouter = router({
                     parentPostID: parentID,
                 },
             })
-        })
+        }),
+    delete: protectedProcedure
+        .input(z.object({
+            id: z.string(),
+        }))
+        .mutation(async ({ input, ctx }) => {
+            if (!ctx.session.user.isAdmin) return false;
+            return !!await ctx.prisma.post.delete({
+                where: {
+                    id: input.id,
+                }
+            })
+        }),
 });

@@ -19,7 +19,7 @@ model Post {
   ownerID      Int
   owner        Profile     @relation(fields: [ownerID], references: [id])
   parentPostID String?
-  parent       Post?       @relation("comments", fields: [parentPostID], references: [id])
+  parent       Post?       @relation("comments", fields: [parentPostID], references: [id], onDelete: Cascade)
   comments     Post[]      @relation("comments")
   savedBy      SavedPost[]
   mentios      Mention[]
@@ -27,9 +27,9 @@ model Post {
 
 model SavedPost {
   profileID Int
-  profile   Profile       @relation(fields: [profileID], references: [id])
+  profile   Profile       @relation(fields: [profileID], references: [id], onDelete: Cascade)
   postID    String
-  post      Post          @relation(fields: [postID], references: [id])
+  post      Post          @relation(fields: [postID], references: [id], onDelete: Cascade)
   like      Boolean?
   retweet   Boolean?
 
@@ -61,8 +61,6 @@ model Profile {
   image       String
   background  String?
   verified    Boolean?
-  blocked     Boolean?
-  admin       Boolean?
   user        User[]
   posts       Post[]
   savedPosts  SavedPost[]
@@ -77,6 +75,8 @@ model User {
   email         String    @unique
   emailVerified DateTime?
   password      String?
+  isBlocked     Boolean?
+  isAdmin       Boolean?
   profileID     Int?
   profile       Profile?  @relation(fields: [profileID], references: [id])
   accounts      Account[]

@@ -5,6 +5,7 @@ import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import RepeatIcon from '@mui/icons-material/Repeat';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import PublishIcon from '@mui/icons-material/Publish';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 import { useRouter } from "next/router";
 import { MouseEvent } from 'react';
@@ -55,6 +56,7 @@ const PostPreview = ({
     const { comments } = data._count;
     const { data: savedPostData } = trpc.savedPost.getByPost.useQuery(id);
     const { mutate: savedPostsMutate } = trpc.savedPost.set.useMutation();
+    const { mutate: deletePostMutate } = trpc.post.delete.useMutation();
 
     const handleSavePost = (e: MouseEvent<HTMLElement> ,type: "like" | "retweet") => {
         e.stopPropagation();
@@ -72,6 +74,10 @@ const PostPreview = ({
 
     const handleOpenOptions = (e: MouseEvent<HTMLElement>) => {
         e.stopPropagation();
+        if (!sessionData?.user.isAdmin) return;
+        deletePostMutate({ id: id }, { onSuccess: () => {
+            queryUtils.post.invalidate();
+        }})
     }
 
     return (
@@ -107,7 +113,10 @@ const PostPreview = ({
                             <Typography> {getHour(createdAt)} </Typography>
 
                             <IconButton sx={{ ml: "auto" }} onClick={handleOpenOptions} >
-                                <MoreHorizIcon fontSize="small" />
+                                {sessionData?.user.isAdmin 
+                                    ? <DeleteForeverIcon fontSize="small" color="error" />
+                                    : <MoreHorizIcon fontSize="small" />
+                                }
                             </IconButton>
                         </Stack>
 

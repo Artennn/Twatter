@@ -5,6 +5,7 @@ import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import RepeatIcon from '@mui/icons-material/Repeat';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import PublishIcon from '@mui/icons-material/Publish';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 import { useRouter } from "next/router";
 
@@ -58,6 +59,7 @@ const Post = ({
     const { comments } = data._count;
     const { data: savedPostData } = trpc.savedPost.getByPost.useQuery(id);
     const { mutate: savedPostsMutate } = trpc.savedPost.set.useMutation();
+    const { mutate: deletePostMutate } = trpc.post.delete.useMutation();
 
     const handleSavePost = (e: MouseEvent<HTMLElement> ,type: "like" | "retweet") => {
         e.stopPropagation();
@@ -75,6 +77,10 @@ const Post = ({
 
     const handleOpenOptions = (e: MouseEvent<HTMLElement>) => {
         e.stopPropagation();
+        if (!sessionData?.user.isAdmin) return;
+        deletePostMutate({ id: id }, { onSuccess: () => {
+            queryUtils.post.invalidate();
+        }})
     }
 
     return (
@@ -109,8 +115,11 @@ const Post = ({
                         </Typography>
                     </Stack>
 
-                    <IconButton sx={{ m: "auto", mr: 0 }}>
-                        <MoreHorizIcon fontSize="small" />
+                    <IconButton sx={{ m: "auto", mr: 0 }} onClick={handleOpenOptions} >
+                        {sessionData?.user.isAdmin 
+                            ? <DeleteForeverIcon fontSize="small" color="error" />
+                            : <MoreHorizIcon fontSize="small" />
+                        }
                     </IconButton>
                 </Stack>
 
