@@ -9,8 +9,8 @@ import { TypeOf, z } from "zod";
 import { ControlledTextField } from "../Inputs";
 
 export const AccountValidation = z.object({
-    name: z.string().min(3, "Zbyt krótkie"),
-    username: z.string().min(3, "Zbyt krótka"),
+    name: z.string().min(3, "Zbyt krótka nazwa"),
+    username: z.string().min(3, "Zbyt krótka nazwa"),
     image: z.string().url("Podaj link do zdjęcia"),
     accepted: z.literal(true)
 })

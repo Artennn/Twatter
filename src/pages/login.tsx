@@ -1,21 +1,27 @@
 import { GetServerSideProps, type NextPage } from "next";
 import { getSession, signIn } from "next-auth/react";
+import { useRouter } from "next/router";
+import { useState } from "react";
 
 import { Login } from "../components/auth/Login";
 
 const LoginPage: NextPage = ({}) => {
+    const router = useRouter();
+    const [errorCode, setErrorCode] = useState(0);
 
-    const handleLogin = (data: Login) => {
+    const handleLogin = async (data: Login) => {
         const { email, password } = data;
-        // TODO show errors
-        signIn('credentials', {
+        const result = await signIn('credentials', {
             email,
             password,
+            redirect: false,
         });
+        if (result?.ok) return router.push("/");
+        result?.status && setErrorCode(result?.status);
     }
 
     return (
-        <Login handleLogin={handleLogin} />
+        <Login errorCode={errorCode} handleLogin={handleLogin} />
     )
 };
 

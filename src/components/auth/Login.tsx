@@ -18,7 +18,13 @@ const validateForm = z.object({
 
 export type Login = TypeOf<typeof validateForm>
 
-export const Login = ({ handleLogin } : { handleLogin: (data: Login) => void }) => {
+export const Login = ({ 
+    errorCode,
+    handleLogin 
+} : { 
+    errorCode: number,
+    handleLogin: (data: Login) => void 
+}) => {
     const formMethodes = useForm<Login>({
         resolver: zodResolver(validateForm),
         mode: "onTouched"
@@ -68,6 +74,8 @@ export const Login = ({ handleLogin } : { handleLogin: (data: Login) => void }) 
                             name="password"
                             type="password"
                         />
+
+                        {errorCode !== 0 && <Typography color="error">❌ Wystąpil błąd przy logowaniu ({errorCode})</Typography>}
 
                         <Button
                             type="submit"
