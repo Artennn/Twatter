@@ -10,7 +10,7 @@ import { useRouter } from "next/router";
 import { MouseEvent } from 'react';
 import { Post, Profile } from "@prisma/client";
 
-import { ProfileAvatar } from "./Misc";
+import { PostContent, ProfileAvatar } from "./Misc";
 import { trpc } from "utils/trpc";
 import { useSession } from "next-auth/react";
 
@@ -35,16 +35,16 @@ const PostPreview = ({
 }) => {
     const router = useRouter();
     const { data: sessionData } = useSession();
-    let { id, content, likes, retweets, createdAt, owner } = data;
-
-    const images = content.match(/(https?:\/\/.*\.(?:png|jpg))/);
-    content = content.replaceAll(/(https?:\/\/.*\.(?:png|jpg))/g, "");
-
-    const image = images ? images[0] : undefined;
+    const { id, content, likes, retweets, createdAt, owner } = data;
 
     const handleOpenProfile = (e: MouseEvent<HTMLElement>) => {
         e.stopPropagation();
         router.push(`/profile/${owner.username}`);
+    }
+
+    const handleOpenParentProfile = (e: MouseEvent<HTMLElement>) => {
+        e.stopPropagation();
+        parentOwner && router.push(`/profile/${parentOwner.username}`);
     }
 
     const handleOpenPost = () => {
@@ -58,6 +58,7 @@ const PostPreview = ({
 
     const handleSavePost = (e: MouseEvent<HTMLElement> ,type: "like" | "retweet") => {
         e.stopPropagation();
+        // could do it on server
         if (sessionData?.user.profileID === owner.id) return;
         savedPostsMutate({
             postID: id,
@@ -95,7 +96,7 @@ const PostPreview = ({
                     <Stack direction="column" width="100%">
                         <Stack direction="row" alignItems="center">
                             <Typography> {owner.displayName} </Typography>
-                            <Typography ml={1} mr={1} color="grey" onClick={handleOpenProfile}>
+                            <Typography ml={1} mr={1} color="text.dark" onClick={handleOpenProfile}>
                                 {"@" + owner.username}
                             </Typography>
                             <Typography> {getHour(createdAt)} </Typography>
@@ -107,28 +108,14 @@ const PostPreview = ({
 
                         {parentOwner &&
                             <Stack direction="row">
-                                <Typography color="grey"> Replying to </Typography>
-                                <Typography color="grey" ml={1} onClick={handleOpenProfile}>
+                                <Typography color="text.dark"> Replying to </Typography>
+                                <Typography color="text.secondary" ml={0.5} onClick={handleOpenParentProfile}>
                                     {"@" + parentOwner.username}
                                 </Typography>
                             </Stack>
                         }
 
-                        <Typography whiteSpace="pre-line" mt={parentOwner? 1 : 0}>
-                            {content}
-                        </Typography>
-
-                        {image ?
-                            <Box pr={2} mt={2}>
-                                <img
-                                    src={`${image}`}
-                                    title="image"
-                                    style={{ maxWidth: "100%", borderRadius: 20, border: "1px solid grey" }}
-                                    loading="lazy"
-                                />
-                            </Box>
-                            : null
-                        }
+                        <PostContent raw={content} onOpen={url => router.push(url)} />
 
                         <Stack direction="row" spacing="auto" mr={4} mb={1} mt={1}>
                             <Stack direction="row" alignItems="center">
