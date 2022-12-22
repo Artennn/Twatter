@@ -12,7 +12,7 @@ export const getServerAuthSession = async (ctx: {
   req: GetServerSidePropsContext["req"];
   res: GetServerSidePropsContext["res"];
 }) => {
-  // req and res passed just in case that credentials are present
+  // request wrapper might modify the cookies on the response
   const [a, b, options] = requestWrapper(ctx.req as NextApiRequest, ctx.res as NextApiResponse);
-  return await unstable_getServerSession(ctx.req, ctx.res, options);
+  return await unstable_getServerSession(a, b, options);
 };

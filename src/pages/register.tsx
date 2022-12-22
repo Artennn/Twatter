@@ -1,5 +1,6 @@
 import { GetServerSideProps, type NextPage } from "next";
-import { getSession, signIn, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
+import { getServerAuthSession } from "server/common/get-server-auth-session";
 import { useRouter } from "next/router";
 
 import { NewLoginMethod, LoginMethod } from "../components/auth/NewLoginMethod";
@@ -42,7 +43,7 @@ const RegisterPage: NextPage<{ authed: boolean }> = ({ authed }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-    const session = await getSession(ctx);
+    const session = await getServerAuthSession(ctx);
     const authed = session?.user?.authID? true : false;
 
     if (session?.user?.profileID) {    

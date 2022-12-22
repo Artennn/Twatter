@@ -2,6 +2,7 @@ import { GetServerSideProps, type NextPage } from "next";
 import { getSession, signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { getServerAuthSession } from "server/common/get-server-auth-session";
 
 import { Login } from "../components/auth/Login";
 
@@ -26,7 +27,7 @@ const LoginPage: NextPage = ({}) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-    const session = await getSession(ctx);
+    const session = await getServerAuthSession(ctx);
     const isAuthed = session?.user?.authID;
     const hasProfile = session?.user?.profileID? true : false;
 
