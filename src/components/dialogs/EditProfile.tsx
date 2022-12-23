@@ -12,8 +12,8 @@ import { trpc } from "utils/trpc";
 export const EditProfileValidation = z.object({
     displayName: z.string().min(3, "Zbyt krótka nazwa"),
     image: z.string().url("Podaj link do zdjęcia"),
-    background: z.string().url("Podaj link do zdjęcia").optional()
-        .or(z.literal(""))
+    description: z.string().max(100, "Zbyt długi tekst").nullish(),
+    background: z.string().url("Podaj link do zdjęcia").nullable()
 })
 
 type EditProfile = TypeOf<typeof EditProfileValidation>
@@ -31,8 +31,9 @@ export const EditProfileDialog = ({
         defaultValues: {
             displayName: profile.displayName,
             image: profile.image,
-            background: profile.background || undefined,
-        }
+            description: profile.description,
+            background: profile.background,
+        },
     })
 
     const { handleSubmit, formState: { isValid, isDirty } } = formMethodes;
@@ -41,7 +42,12 @@ export const EditProfileDialog = ({
     const { mutate: profileMutate } = trpc.profile.edit.useMutation();
 
     const onSubmit: SubmitHandler<EditProfile> = (data) => {
-        profileMutate(data, {
+        const newData = {
+            ...data,
+            description: data.description !== ""? data.description : null,
+            background: data.background !== ""? data.background : null,
+        }
+        profileMutate(newData, {
             onSuccess: () => {
                 queryUtils.profile.invalidate();
                 onClose();
@@ -52,7 +58,7 @@ export const EditProfileDialog = ({
     return (
         <Dialog open={true}>
             <Box 
-                width={600} height={650} 
+                width={600} minHeight={650} 
                 bgcolor="black" 
                 borderRadius={2} 
                 p={2}
@@ -85,13 +91,19 @@ export const EditProfileDialog = ({
                             name="displayName"
                         />
                         <ControlledTextField
+                            label="Profile Description"
+                            name="description"
+                            multiline
+                        />
+                        <ControlledTextField
                             label="Profile Picture"
                             name="image"
+                            multiline
                         />
                         <ControlledTextField
                             label="Background Picture"
                             name="background"
-                            
+                            multiline
                         />
 
                         <Button 
