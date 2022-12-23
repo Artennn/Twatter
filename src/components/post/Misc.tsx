@@ -1,6 +1,9 @@
+import React, { MouseEvent } from "react"
+import Link from "next/link"
+
 import { Stack, Avatar, Box, Typography } from "@mui/material"
 
-import React, { MouseEvent } from "react"
+import { parseContent, ParsedContent } from "utils/contentParser"
 
 export const ProfileAvatar = ({ 
     image,
@@ -41,56 +44,27 @@ export const ProfileAvatar = ({
     )
 }
 
-interface ParsedContent {
-    type: "text" | "@" | "#",
-    text: string,
-}
-
-const parseContent = (raw: string): ParsedContent[] => {
-    const mentions = raw.match(/\B\@\w+/g);
-    if (!mentions) return [{ type: "text", text: raw }];
-
-    const result: ParsedContent[] = [];
-    let lastIndex = 0;
-    for (const mention of mentions) {
-        const i = raw.search(mention);
-        const text = raw.substring(lastIndex, i);
-        lastIndex = i + mention.length;
-        result.push({
-            type: "text",
-            text: text,
-        });
-        result.push({
-            type: "@",
-            text: mention,
-        })
-    }
-    result.push({
-        type: "text",
-        text: raw.substring(lastIndex),
-    })
-
-    return result;
-}
-
 export const PostContent = ({ 
     raw,
     isThread,
+    imageAsLink,
     onOpen
 } : { 
     raw: string,
     isThread?: boolean,
+    imageAsLink?: boolean,
     onOpen: (url: string) => void,
 }) => {
-    const images = raw.match(/(https?:\/\/.*\.(?:png|jpg))/);
-    raw = raw.replaceAll(/(https?:\/\/.*\.(?:png|jpg))/g, "");
-    const image = images ? images[0] : undefined;
-
     const parsedContent = parseContent(raw);
+    const withoutImages = parsedContent.filter(entry => entry.type !== "image");
+    const images = parsedContent.filter(entry => entry.type === "image");
 
-    const handleOpenProfile = (e: MouseEvent<HTMLElement>, username: string) => {
+    const displayedEntries = imageAsLink? parsedContent : withoutImages;
+
+    const handleOpen = (e: MouseEvent<HTMLElement>, entry: ParsedContent) => {
         e.stopPropagation();
-        onOpen(`/profile/${username}`);
+        entry.type === "@" && onOpen(`/profile/${entry.text.replace("@", "")}`);
+        entry.type === "#" && onOpen(`/hashtag/${entry.text.replace("#", "")}`);
     }
 
     return (
@@ -102,25 +76,32 @@ export const PostContent = ({
                 fontSize={isThread? 24 : 16}
                 sx={{ wordWrap: "break-word" }} 
             >
-                {parsedContent.map((entry, key) => (
+                {displayedEntries.map((entry, key) => (
                     <React.Fragment key={key}>
                         {entry.type === "text" && <span> {entry.text} </span>}
-                        {entry.type === "@" && 
+
+                        {((entry.type === "@") || (entry.type === "#")) && 
                             <Typography 
                                 display="inline-flex" 
                                 color="text.secondary"
                                 fontSize="inherit"
-                                onClick={(e: MouseEvent<HTMLElement>) => handleOpenProfile(e, entry.text.replace("@", ""))} 
-                            > {entry.text} </Typography>
+                                onClick={(e: MouseEvent<HTMLElement>) => handleOpen(e, entry)} 
+                            >
+                                {entry.text} 
+                            </Typography>
+                        }
+
+                        {((entry.type === "link") || (entry.type === "image")) && 
+                            <Link href={entry.text} > {entry.text} </Link>
                         }
                     </React.Fragment>
                 ))}
             </Box>
 
-            {image && 
+            {(!imageAsLink && images[0]) && 
                 <Box pr={2} mt={2}>
                     <img
-                        src={`${image}`}
+                        src={images[0].text}
                         title="image"
                         style={{ maxWidth: "100%", borderRadius: 20, border: "1px solid grey" }}
                         loading="lazy"
