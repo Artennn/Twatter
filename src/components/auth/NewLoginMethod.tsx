@@ -1,14 +1,14 @@
-import { Box, Button, Stack, IconButton, SvgIcon, Typography } from "@mui/material";
-import CloseIcon from '@mui/icons-material/Close';
-
-import { AuthLayout } from "./Layouts";
-import { signIn } from "next-auth/react";
-
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TypeOf, z } from "zod";
-import { ControlledTextField } from "../Inputs";
+
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
+
+import { Box, Button, Stack, IconButton, SvgIcon, Typography } from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
+
+import { ControlledTextField } from "../Inputs";
 
 export const LoginValidation = z.object({
     email: z.string().email("Niepoprawny adres email").endsWith("@pollub.edu.pl", "Niedozwolona domena"),
@@ -22,7 +22,13 @@ export const LoginValidation = z.object({
 
 export type LoginMethod = TypeOf<typeof LoginValidation>
 
-export const NewLoginMethod = ({ handleCreate } : { handleCreate: (data: LoginMethod) => void }) => {
+export const NewLoginMethod = ({ 
+    handleCreate,
+    error
+} : { 
+    handleCreate: (data: LoginMethod) => void,
+    error?: string,
+}) => {
     const router = useRouter();
 
     const formMethodes = useForm<LoginMethod>({
@@ -37,7 +43,7 @@ export const NewLoginMethod = ({ handleCreate } : { handleCreate: (data: LoginMe
     };
 
     return (
-        <AuthLayout>
+        <>
             <IconButton sx={{ position: 'absolute', top: 8, left: 8 }} onClick={() => router.push("/login")}>
                 <CloseIcon fontSize="large" />
             </IconButton>
@@ -65,6 +71,12 @@ export const NewLoginMethod = ({ handleCreate } : { handleCreate: (data: LoginMe
                             Zaloguj się przez Google
                         </Button>
 
+                        <Stack direction="row">
+                            <Box height="1px" bgcolor="rgb(51, 54, 57)" flex={1} mt="auto" mb="auto" />
+                            <Typography ml={1} mr={1} > lub </Typography>
+                            <Box height="1px" bgcolor="rgb(51, 54, 57)" flex={1} mt="auto" mb="auto" />
+                        </Stack>
+
                         <ControlledTextField
                             label="Adres email"
                             name="email"
@@ -80,6 +92,12 @@ export const NewLoginMethod = ({ handleCreate } : { handleCreate: (data: LoginMe
                             type="password"
                         />
 
+                        {error && 
+                            <Typography color="error">
+                                ❌ Wystąpil błąd przy logowaniu ({error})
+                            </Typography>
+                        }
+
                         <Button
                             type="submit"
                             variant="contained"
@@ -92,6 +110,6 @@ export const NewLoginMethod = ({ handleCreate } : { handleCreate: (data: LoginMe
                     </Stack>
                 </FormProvider>
             </Box>
-        </AuthLayout>
+        </>
     )
 }
