@@ -129,8 +129,18 @@ export const postRouter = router({
                     }
                 }
             })
-            if (!result?.following) return [];
-            return await ctx.prisma.post.findMany({
+            if (!result?.following || result.following.length === 0) {
+                const posts = await ctx.prisma.post.findMany({
+                    include: {
+                        ...includeFullPost,
+                        ...includeFullParent,
+                    },
+                    orderBy: { createdAt: "desc" },
+                    take: 10,
+                });
+                return posts.filter(post => !posts.some(post2 => post2.parentPostID === post.id))
+            }
+            let posts = await ctx.prisma.post.findMany({
                 include: {
                     ...includeFullPost,
                     ...includeFullParent
@@ -144,6 +154,20 @@ export const postRouter = router({
                     }
                 },
             })
+            if (posts.length < 10) {
+                const add = await ctx.prisma.post.findMany({
+                    include: {
+                        ...includeFullPost,
+                        ...includeFullParent,
+                    },
+                    orderBy: { createdAt: "desc" },
+                    take: 10,
+                });
+                posts = [...posts, ...add];
+                posts = posts.sort((a, b) => a.createdAt < b.createdAt? 1 : -1);
+            }
+            posts = posts.filter(post => !posts.some(post2 => post2.parentPostID === post.id));
+            return posts;
         }),
     create: protectedProcedure
         .input(z.object({
