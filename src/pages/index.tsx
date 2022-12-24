@@ -5,6 +5,7 @@ import { Box } from "@mui/material";
 import SideBar from "../components/SideBar";
 import Feed from "../components/Feed";
 import Trending from "../components/Trending";
+import { getServerAuthSession } from "server/common/get-server-auth-session";
 
 const Home: NextPage = () => {
 
@@ -18,7 +19,7 @@ const Home: NextPage = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const session = await getSession(ctx);
+  const session = await getServerAuthSession(ctx);
   if (!session?.user?.profileID) {    
       return {
         redirect: {

@@ -45,14 +45,14 @@ export const profileRouter = router({
         .mutation(async ({ input, ctx }) => {
             const { profileID } = ctx.session.user;
             if (!profileID) return false;
-            const { displayName, image } = input; 
-            const background = input.background === ""? undefined : input.background;
+            const { displayName, image, description, background } = input; 
             return !!await ctx.prisma.profile.update({
                 where: { id: profileID },
                 data: {
                     displayName,
                     image,
                     background,
+                    description,
                 }
             })
         }),

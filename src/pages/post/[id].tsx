@@ -1,7 +1,7 @@
 import { Box, CircularProgress } from "@mui/material";
 
 import { GetServerSideProps, NextPage } from "next";
-import { getSession } from "next-auth/react";
+import { getServerAuthSession } from "server/common/get-server-auth-session";
 
 import NavBar from "components/NavBar";
 import SideBar from "components/SideBar";
@@ -58,7 +58,7 @@ const PostPage: NextPage<{ postID: string }> = ({ postID }) => {
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-    const session = await getSession(ctx);
+    const session = await getServerAuthSession(ctx);
     const { id } = ctx.query;
 
     if (typeof id !== "string") {

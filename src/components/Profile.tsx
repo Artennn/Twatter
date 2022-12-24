@@ -83,7 +83,12 @@ const Profile = ({
 
             <Stack direction="column" p={2} mt={3} color="text.dark">
                 <Typography fontSize={20} fontWeight={700} color="white"> {profile.displayName} </Typography>
-                <Typography variant="subtitle2" mb={2}> {"@" + profile.username} </Typography>
+                <Typography variant="subtitle2" mb={1.5}> {"@" + profile.username} </Typography>
+
+                {/* TODO: change to parsed text */}
+                {profile.description &&
+                    <Typography fontSize={15} color="white" mb={1.5} > {profile.description} </Typography>
+                }
 
                 <Stack direction="row">
                     <CalendarMonthIcon fontSize="small"/>

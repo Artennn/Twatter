@@ -1,7 +1,5 @@
 import { Avatar, Box, IconButton, Typography, Stack, TextField, Button, CircularProgress } from "@mui/material";
 
-import FlareIcon from '@mui/icons-material/Flare';
-
 import ImageIcon from '@mui/icons-material/Image';
 import GifBoxIcon from '@mui/icons-material/GifBox';
 import ListIcon from '@mui/icons-material/List';
@@ -13,7 +11,9 @@ import { ChangeEvent, useState } from "react";
 import { useSession } from "next-auth/react";
 import { trpc } from "../../utils/trpc";
 
-const POST_MAX_LENGTH = 100;
+import { PostContent } from "./Misc";
+
+const POST_MAX_LENGTH = 255;
 
 const NewPost = ({ parentID } : { parentID?: string }) => {
     const { data: sessionData } = useSession();
@@ -51,14 +51,28 @@ const NewPost = ({ parentID } : { parentID?: string }) => {
                 <Stack direction="row">
                     <Avatar sx={{ width: 48, height: 48, mr: 2 }} src={profile?.image} />
                     <Box width="100%">
-                        <TextField 
-                            variant="outlined" 
-                            multiline 
-                            fullWidth 
-                            placeholder={parentID? "Tweet your reply" : "What's happening?"}
-                            value={content}
-                            onChange={handleSetContent}
-                        />
+                        <Box position="relative">
+                            <TextField
+                                variant="outlined" 
+                                multiline 
+                                fullWidth 
+                                placeholder={parentID? "Tweet your reply" : "What's happening?"}
+                                value={content}
+                                onChange={handleSetContent}
+                                inputProps={{ 
+                                    style: { 
+                                        lineHeight: 1.5,
+                                        color: length > 0? "transparent" : "inherit",
+                                        caretColor: "white"
+                                    }
+                                }}
+                                sx={{ zIndex: 1}}
+                            />
+                            <Box position="absolute" top={0} p="16.5px 14px" zIndex={0}>
+                                <PostContent raw={content} imageAsLink onOpen={() => undefined} />
+                            </Box>
+                        </Box>
+
                         <Stack direction="row" marginTop={1}>
                             <IconButton>
                                 <ImageIcon fontSize="small" />

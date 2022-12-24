@@ -1,6 +1,3 @@
-import { Box, Button, Stack, IconButton, SvgIcon, Typography } from "@mui/material";
-import CloseIcon from '@mui/icons-material/Close';
-
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 
@@ -8,7 +5,9 @@ import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TypeOf, z } from "zod";
 
-import { AuthLayout } from "./Layouts";
+import { Box, Button, Stack, IconButton, SvgIcon, Typography } from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
+
 import { ControlledTextField } from "components/Inputs";
 
 const validateForm = z.object({
@@ -19,11 +18,11 @@ const validateForm = z.object({
 export type Login = TypeOf<typeof validateForm>
 
 export const Login = ({ 
-    errorCode,
-    handleLogin 
+    error,
+    handleLogin,
 } : { 
-    errorCode: number,
-    handleLogin: (data: Login) => void 
+    error?: string,
+    handleLogin: (data: Login) => void,
 }) => {
     const formMethodes = useForm<Login>({
         resolver: zodResolver(validateForm),
@@ -37,7 +36,7 @@ export const Login = ({
     };
 
     return (
-        <AuthLayout>
+        <>
             <IconButton sx={{ position: 'absolute', top: 8, left: 8 }}>
                 <CloseIcon fontSize="large" />
             </IconButton>
@@ -65,6 +64,12 @@ export const Login = ({
                             Zaloguj się przez Google
                         </Button>
 
+                        <Stack direction="row">
+                            <Box height="1px" bgcolor="rgb(51, 54, 57)" flex={1} mt="auto" mb="auto" />
+                            <Typography ml={1} mr={1} > lub </Typography>
+                            <Box height="1px" bgcolor="rgb(51, 54, 57)" flex={1} mt="auto" mb="auto" />
+                        </Stack>
+
                         <ControlledTextField
                             label="Adres email"
                             name="email"
@@ -75,7 +80,11 @@ export const Login = ({
                             type="password"
                         />
 
-                        {errorCode !== 0 && <Typography color="error">❌ Wystąpil błąd przy logowaniu ({errorCode})</Typography>}
+                        {error && 
+                            <Typography color="error">
+                                ❌ Wystąpil błąd przy logowaniu ({error})
+                            </Typography>
+                        }
 
                         <Button
                             type="submit"
@@ -102,6 +111,6 @@ export const Login = ({
                     </Stack>
                 </FormProvider>
             </Box>
-        </AuthLayout>
+        </>
     )
 }

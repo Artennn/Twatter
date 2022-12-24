@@ -59,6 +59,7 @@ model Profile {
   username    String      @unique
   displayName String
   image       String
+  description String?
   background  String?
   verified    Boolean?
   user        User[]

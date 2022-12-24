@@ -12,6 +12,9 @@ const styles = {
     "::-webkit-scrollbar-thumb": {
         backgroundColor: "#454a4d",
     },
+    "a": {
+        color: "rgb(29, 155, 240)", //text secondary
+    }
 }
 
 export const GlobalStyles = () => <GlobalStylesMUI styles={styles} />;
@@ -19,6 +22,10 @@ export const GlobalStyles = () => <GlobalStylesMUI styles={styles} />;
 declare module '@mui/material/styles' {
     export interface TypeText {
         dark: string,
+    }
+    export interface TypeBackground {
+        grey1: string,
+        grey2: string,
     }
 }
 
@@ -34,6 +41,10 @@ export const darkTheme = createTheme({
         text: {
             secondary: "rgb(29, 155, 240)",
             dark: "rgb(113, 118, 123)",
+        },
+        background: {
+            grey1: "rgba(91, 112, 131, 0.4)",
+            grey2: "rgb(22, 24, 28)",
         },
         action: {
             // doesnt apply (atleast to buttons)

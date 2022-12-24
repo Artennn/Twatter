@@ -20,7 +20,7 @@ const Trending = () => {
                 position="sticky"
                 top={16}
                 width={350} 
-                bgcolor="rgb(22, 24, 28)" 
+                bgcolor="background.grey2" 
                 borderRadius={2}
                 mt={10}
                 pb={3}

@@ -10,6 +10,7 @@ import Trending from "components/Trending";
 
 import { trpc } from "utils/trpc";
 import React from "react";
+import { getServerAuthSession } from "server/common/get-server-auth-session";
 
 
 const ProfilePage: NextPage<{ profileName: string, profileTab: ProfileTab }> = ({ profileName, profileTab }) => {
@@ -119,7 +120,7 @@ const parseLink = (link: string | string[]) => {
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-    const session = await getSession(ctx);
+    const session = await getServerAuthSession(ctx);
     const { profileName, profileTab } = parseLink(ctx.query.all as string | string[]); 
 
     if (!session?.user?.profileID) {

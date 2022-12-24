@@ -13,20 +13,6 @@ import bcrypt from "bcrypt";
 import { randomUUID } from "crypto";
 import Cookies from "cookies";
 
-declare module "next-auth" {
-    interface User {
-        profileID?: number,
-        isAdmin?: boolean,
-    }
-    interface Session {
-        user?: {
-            authID: string,
-            profileID?: number,
-            isAdmin?: boolean,
-        }
-    }
-}
-
 const CREDENTIALS_SESSION_MAX_AGE = 60 * 60 * 24 * 30; // 30 days
 
 export const handler = async (pReq: NextApiRequest, pRes: NextApiResponse) => {
@@ -102,7 +88,7 @@ export function requestWrapper(
                     const cookies = new Cookies(req, res);
                     const cookie = cookies.get("next-auth.session-token");
                     if (cookie) return cookie;
-                    else return "";
+                    return "";
                 }
                 // Revert to default behaviour when not in the credentials provider callback flow
                 return encode({ token, secret, maxAge });
@@ -119,7 +105,6 @@ export function requestWrapper(
             GoogleProvider({
                 clientId: env.GOOGLE_CLIENT_ID,
                 clientSecret: env.GOOGLE_CLIENT_SECRET,
-                
                 profile: (profile, tokens) => {
                     return {
                         id: profile.sub,

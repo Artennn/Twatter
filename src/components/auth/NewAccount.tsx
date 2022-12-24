@@ -1,11 +1,10 @@
-import { Box, Button, Stack, IconButton, Paper, SvgIcon, Typography, Checkbox } from "@mui/material";
-import CloseIcon from '@mui/icons-material/Close';
-
-import { AuthLayout } from "./Layouts";
-
 import { Controller, FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TypeOf, z } from "zod";
+
+import { Box, Button, Stack, IconButton, SvgIcon, Typography, Checkbox } from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
+
 import { ControlledTextField } from "../Inputs";
 
 export const AccountValidation = z.object({
@@ -17,7 +16,13 @@ export const AccountValidation = z.object({
 
 export type Account = TypeOf<typeof AccountValidation>
 
-export const NewAccount = ({ handleCreate } : { handleCreate: (data: Account) => void }) => {
+export const NewAccount = ({ 
+    handleCreate,
+    error,
+} : { 
+    handleCreate: (data: Account) => void,
+    error?: string,
+}) => {
     const formMethodes = useForm<Account>({
         resolver: zodResolver(AccountValidation),
         mode: "onTouched"
@@ -30,7 +35,7 @@ export const NewAccount = ({ handleCreate } : { handleCreate: (data: Account) =>
     };
 
     return (
-        <AuthLayout>
+        <>
             <IconButton sx={{ position: 'absolute', top: 8, left: 8 }}>
                 <CloseIcon fontSize="large" />
             </IconButton>
@@ -70,6 +75,12 @@ export const NewAccount = ({ handleCreate } : { handleCreate: (data: Account) =>
                             </Typography>
                         </Stack>
 
+                        {error && 
+                            <Typography color="error">
+                                ❌ Wystąpil błąd przy logowaniu ({error})
+                            </Typography>
+                        }
+
                         <Button
                             variant="contained"
                             color="secondary"
@@ -82,6 +93,6 @@ export const NewAccount = ({ handleCreate } : { handleCreate: (data: Account) =>
                     </Stack>
                 </FormProvider>
             </Box>
-        </AuthLayout>
+        </>
     )
 }
