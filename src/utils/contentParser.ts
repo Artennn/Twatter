@@ -17,7 +17,7 @@ export const parseContent = (raw: string): ParsedContent[] => {
         if (type === "text") {
             if (result[result.length - 1]?.type === "text") {
                 const last = result.pop();
-                word += " " + last?.text;
+                word = last?.text + " " + word;
             }
         }
         result.push({
