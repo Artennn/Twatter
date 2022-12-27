@@ -47,8 +47,6 @@ const NavBar = ({
                 position: "sticky",
                 bgcolor: "rgba(0, 0, 0, 0.65)",
                 backdropFilter: "blur(12px)",
-                borderRight: "1px solid grey",
-                borderLeft: "1px solid grey",
                 p: 1,
                 top: 0,
                 zIndex: 3 

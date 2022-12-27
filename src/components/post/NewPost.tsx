@@ -45,7 +45,7 @@ const NewPost = ({ parentID } : { parentID?: string }) => {
     }
 
     return (
-        <Box p={2} sx={{ border: "1px grey solid", borderTop: "none", }}>
+        <Box p={2} sx={{ borderBottom: "1px grey solid" }}>
             <Stack direction="column">
                 
                 <Stack direction="row">

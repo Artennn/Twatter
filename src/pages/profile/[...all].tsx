@@ -1,17 +1,17 @@
-import { Box, CircularProgress } from "@mui/material";
+import React from "react";
+import { trpc } from "utils/trpc";
+
+import { getServerAuthSession } from "server/common/get-server-auth-session";
 import { GetServerSideProps, NextPage } from "next";
-import { getSession, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
+
+import { Box, CircularProgress, Typography } from "@mui/material";
+
+import { MainLayout } from "components/Layouts";
 
 import NavBar from "components/NavBar";
 import PostPreview from "components/post/PostPreview";
 import Profile from "components/Profile";
-import SideBar from "components/SideBar";
-import Trending from "components/Trending";
-
-import { trpc } from "utils/trpc";
-import React from "react";
-import { getServerAuthSession } from "server/common/get-server-auth-session";
-
 
 const ProfilePage: NextPage<{ profileName: string, profileTab: ProfileTab }> = ({ profileName, profileTab }) => {
     const queryUtils = trpc.useContext();
@@ -43,28 +43,40 @@ const ProfilePage: NextPage<{ profileName: string, profileTab: ProfileTab }> = (
         })
     }
 
-    return (
-        <Box sx={{ display: "flex", flexDirection: "row", width: "100%" }}>
-            <SideBar />
-            <Box width="100%" maxWidth={600} height="100%" bgcolor="common.black">
-                <NavBar goBack title={profile?.displayName} subtitle={`${posts?.length} Tweets`} />
+    if (isLoading) return (
+        <MainLayout>
+            <NavBar goBack title="Profile" />
+            <Box textAlign="center" mt={10}>
+                <CircularProgress size={75} />
+            </Box>
+        </MainLayout>
+    )
 
-                {isLoading && <CircularProgress />}
-                {!isLoading && !profile && "No profile found :("}
-                {!isLoading && profile && (
-                    <Profile
-                        profile={profile}
-                        isOwner={isOwner}
-                        following={isFollowing}
-                        handleFollow={handleFollow}
-                        tab={profileTab}
-                    />
-                )}
+    if (!profile) return (
+        <MainLayout>
+            <NavBar goBack title="Profile" />
+            <Box textAlign="center" mt={10}>
+                <Typography> This account doesn't exist :( </Typography>
+            </Box>
+        </MainLayout>
+    )
+
+    return (
+        <MainLayout>
+            <NavBar goBack title={profile?.displayName} subtitle={`${posts?.length} Tweets`} />
+            <>
+                <Profile
+                    profile={profile}
+                    isOwner={isOwner}
+                    following={isFollowing}
+                    handleFollow={handleFollow}
+                    tab={profileTab}
+                />
 
                 {profileTab === "" && posts?.map((post, key) => (
                     <PostPreview data={post} key={key} />
                 ))}
-                
+
                 {profileTab === "replies" && replies?.map((reply, key) => ( 
                     <React.Fragment key={key}>
                         {reply.parent && (
@@ -83,9 +95,8 @@ const ProfilePage: NextPage<{ profileName: string, profileTab: ProfileTab }> = (
                 {profileTab === "likes" && liked?.map((post, key) => (
                     <PostPreview data={post} key={key} />
                 ))}
-            </Box>
-            <Trending />
-        </Box>
+            </>
+        </MainLayout>
     );
 };
 

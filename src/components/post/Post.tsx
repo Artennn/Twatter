@@ -88,8 +88,7 @@ const Post = ({
             pl={2} pr={2} 
             onClick={handleOpenPost}
             sx={{ 
-                border: "1px grey solid", 
-                borderTop: "none", 
+                borderBottom: "1px grey solid", 
                 cursor: "pointer" 
             }}
         >

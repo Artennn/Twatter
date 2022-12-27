@@ -85,9 +85,7 @@ const PostPreview = ({
             pl={2} pr={2}
             onClick={handleOpenPost}
             sx={{
-                border: "1px grey solid",
-                borderBottom: hasReply? "none" : "",
-                borderTop: parentOwner? "none" : "",
+                borderBottom: hasReply? "none" : "1px solid grey",
                 cursor: "pointer",
             }}
         >
