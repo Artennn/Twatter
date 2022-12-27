@@ -1,4 +1,4 @@
-import { Avatar, Box, Stack, Button, IconButton, Tab, Tabs, Typography, SvgIcon } from "@mui/material";
+import { Avatar, Box, Stack, Button, IconButton, Tab, Tabs, Typography, SvgIcon, Link } from "@mui/material";
 import { Profile as ProfileDB } from "@prisma/client";
 
 import NotificationsIcon from '@mui/icons-material/Notifications';
@@ -103,10 +103,25 @@ const Profile = ({
                 </Stack>
 
                 <Stack direction="row" mt={1}>
-                    <Typography variant="subtitle2" color="white" ml={0.5}> {profile._count.following} </Typography>
-                    <Typography variant="subtitle2" ml={0.75}> Following </Typography>
-                    <Typography variant="subtitle2" color="white" ml={2}> {profile._count.followers} </Typography>
-                    <Typography variant="subtitle2" ml={0.75}> Followers </Typography>
+                    <Link
+                        href={`/profile/${profile.username}/following`} 
+                        display="inherit"
+                        color="white"
+                        underline="hover"
+                    >
+                        <Typography variant="subtitle2" color="white" ml={0.5}> {profile._count.following} </Typography>
+                        <Typography variant="subtitle2" color="text.dark" ml={0.75}> Following </Typography>
+                    </Link>
+
+                    <Link
+                        href={`/profile/${profile.username}/followers`} 
+                        display="inherit"
+                        color="white"
+                        underline="hover"
+                    >
+                        <Typography variant="subtitle2" color="white" ml={2}> {profile._count.followers} </Typography>
+                        <Typography variant="subtitle2" color="text.dark" ml={0.75}> Followers </Typography>
+                    </Link>
                 </Stack>
             </Stack>
 

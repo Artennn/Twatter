@@ -35,7 +35,7 @@ const Trending = () => {
                         sx={{ 
                             cursor: "pointer", 
                             "&:hover": {
-                                bgcolor: "rgba(255, 255, 255, 0.03)",
+                                bgcolor: "background.hover",
                             }
                         }}
                     >

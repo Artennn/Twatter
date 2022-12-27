@@ -1,24 +1,6 @@
 import { createTheme } from "@mui/material";
 import GlobalStylesMUI from "@mui/material/GlobalStyles";
 
-const styles = {
-    "::-webkit-scrollbar": {
-        backgroundColor: "#202324",
-        color: "#aba499",
-    },
-    "::-webkit-scrollbar-corner": {
-        backgroundColor: "#181a1b",
-    },
-    "::-webkit-scrollbar-thumb": {
-        backgroundColor: "#454a4d",
-    },
-    "a": {
-        color: "rgb(29, 155, 240)", //text secondary
-    }
-}
-
-export const GlobalStyles = () => <GlobalStylesMUI styles={styles} />;
-
 declare module '@mui/material/styles' {
     export interface TypeText {
         dark: string,
@@ -26,6 +8,7 @@ declare module '@mui/material/styles' {
     export interface TypeBackground {
         grey1: string,
         grey2: string,
+        hover: string,
     }
 }
 
@@ -45,6 +28,7 @@ export const darkTheme = createTheme({
         background: {
             grey1: "rgba(91, 112, 131, 0.4)",
             grey2: "rgb(22, 24, 28)",
+            hover: "rgba(255, 255, 255, 0.07)",
         },
         action: {
             // doesnt apply (atleast to buttons)
@@ -57,5 +41,23 @@ export const darkTheme = createTheme({
         button: {
             textTransform: "none",
         }
-    }
+    },
 })
+
+const styles = {
+    "::-webkit-scrollbar": {
+        backgroundColor: "#202324",
+        color: "#aba499",
+    },
+    "::-webkit-scrollbar-corner": {
+        backgroundColor: "#181a1b",
+    },
+    "::-webkit-scrollbar-thumb": {
+        backgroundColor: "#454a4d",
+    },
+    "a": {
+        color: darkTheme.palette.text.secondary
+    }
+}
+
+export const GlobalStyles = () => <GlobalStylesMUI styles={styles} />;

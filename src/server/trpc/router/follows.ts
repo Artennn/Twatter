@@ -20,6 +20,74 @@ export const followsRouter = router({
                 }
             })
         }), */
+    getFollowers: protectedProcedure
+        .input(z.object({
+            username: z.string(),
+        }))
+        .query(async ({ input, ctx }) => {
+            const { profileID } = ctx.session.user;
+            if (!profileID) return undefined;
+            const { username } = input;
+            const followers = await ctx.prisma.profile.findMany({
+                where: {
+                    following: {
+                        some: {
+                            following: {
+                                username: username,
+                            }
+                        }
+                    }
+                },
+                include: {
+                    followers: {
+                        where: {
+                            followerID: profileID,
+                        }
+                    }
+                }
+            })
+            return followers.map(follower => {
+                const { followers, ...data } = follower;
+                return {
+                    ...data,
+                    isFollowing: followers.length > 0,
+                }
+            })
+        }),
+    getFollowing: protectedProcedure
+        .input(z.object({
+            username: z.string(),
+        }))
+        .query(async ({ input, ctx }) => {
+            const { profileID } = ctx.session.user;
+            if (!profileID) return undefined;
+            const { username } = input;
+            const following = await ctx.prisma.profile.findMany({
+                where: {
+                    followers: {
+                        some: {
+                            follower: {
+                                username: username,
+                            }
+                        }
+                    }
+                },
+                include: {
+                    followers: {
+                        where: {
+                            followerID: profileID,
+                        }
+                    }
+                }
+            })
+            return following.map(follow => {
+                const { followers, ...data } = follow;
+                return {
+                    ...data,
+                    isFollowing: followers.length > 0,
+                }
+            })
+        }),
     isFollowing: protectedProcedure
         .input(z.object({
             username: z.string(),
@@ -37,6 +105,7 @@ export const followsRouter = router({
                 }
             })
         }),
+    // TODO change to toggle
     follow: protectedProcedure
         .input(z.number())
         .mutation(async ({ input, ctx}) => {
