@@ -1,4 +1,4 @@
-import { Avatar, Box, IconButton, Typography, Stack, TextField, Button, CircularProgress } from "@mui/material";
+import { Box, IconButton, Typography, Stack, TextField, Button, CircularProgress, Skeleton } from "@mui/material";
 
 import ImageIcon from '@mui/icons-material/Image';
 import GifBoxIcon from '@mui/icons-material/GifBox';
@@ -12,6 +12,7 @@ import { useSession } from "next-auth/react";
 import { trpc } from "../../utils/trpc";
 
 import { PostContent } from "./Misc";
+import { Avatar } from "components/Misc";
 
 const POST_MAX_LENGTH = 255;
 
@@ -19,7 +20,7 @@ const NewPost = ({ parentID } : { parentID?: string }) => {
     const { data: sessionData } = useSession();
     const queryUtils = trpc.useContext();
     
-    const { data: profile } = trpc.profile.get.useQuery({ id: sessionData?.user?.profileID })
+    const { data: profile } = trpc.profile.get.useQuery({ id: sessionData?.user?.profileID }, { enabled: !!sessionData?.user?.profileID })
     const postMutation = trpc.post.create.useMutation();
 
     const [content, setContent] = useState("");
@@ -49,13 +50,18 @@ const NewPost = ({ parentID } : { parentID?: string }) => {
             <Stack direction="column">
                 
                 <Stack direction="row">
-                    <Avatar sx={{ width: 48, height: 48, mr: 2 }} src={profile?.image} />
-                    <Box width="100%">
+                    {profile
+                        ? <Avatar username={profile.username} image={profile.image} />
+                        : <Skeleton variant="circular" sx={{ minWidth: 48, height: 48 }} />
+                    }
+
+                    <Box width="100%" ml={2}>
                         <Box position="relative">
                             <TextField
                                 variant="outlined" 
                                 multiline 
-                                fullWidth 
+                                fullWidth
+                                spellCheck={false}
                                 placeholder={parentID? "Tweet your reply" : "What's happening?"}
                                 value={content}
                                 onChange={handleSetContent}

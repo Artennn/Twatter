@@ -1,4 +1,4 @@
-import { Avatar, Badge, Box, ButtonBase, IconButton, Skeleton, Stack, SvgIcon, Typography, useMediaQuery } from "@mui/material";
+import { Badge, Box, ButtonBase, IconButton, Skeleton, Stack, SvgIcon, Typography, useMediaQuery } from "@mui/material";
 
 import LogoutIcon from '@mui/icons-material/Logout';
 
@@ -15,6 +15,7 @@ import { SvgIconComponent } from "@mui/icons-material";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { trpc } from "../utils/trpc";
+import { Avatar, DisplayNameVertical, DisplayNameVerticalSkeleton } from "./Misc";
 
 const ListItem = ({
     name,
@@ -76,7 +77,7 @@ const ListItem = ({
 const SideBar = () => {
     const router = useRouter();
     const { data: sessionData } = useSession(); 
-    const { data: userData, isLoading } = trpc.profile.get.useQuery({ id: sessionData?.user?.profileID }, { enabled: !!sessionData?.user?.profileID });
+    const { data: userData } = trpc.profile.get.useQuery({ id: sessionData?.user?.profileID }, { enabled: !!sessionData?.user?.profileID });
 
     const currentPage = router.asPath
 
@@ -151,23 +152,22 @@ const SideBar = () => {
                         />
 
                         <Stack direction="row" mt="auto" width="100%">
-                            {!isLoading
-                                ? <Avatar sx={{ height: 48, width: 48 }} src={userData?.image} />
+                            {userData
+                                ? <Avatar username={userData.username} image={userData.image} />
                                 : <Skeleton variant="circular" width={48} height={48} />
                             }
 
-                            <Stack direction="column" ml={2} mr="auto">
-                                {!isLoading
-                                    ? <Typography> {userData?.displayName} </Typography>
-                                    : <Skeleton variant="text" width={100} />
-                                }
-                                {!isLoading
-                                    ? <Typography> {"@" + userData?.username} </Typography>
-                                    : <Skeleton variant="text" />
-                                }
-                            </Stack>
+                            {userData
+                                ? <DisplayNameVertical
+                                    username={userData.username}
+                                    displayName={userData.displayName}
+                                    verified={userData.verified}
+                                    sx={{ ml: 2 }}
+                                />
+                                : <DisplayNameVerticalSkeleton sx={{ ml: 2 }} />
+                            }
 
-                            <IconButton sx={{ mt: "auto", mb: "auto" }} onClick={() => signOut()}>
+                            <IconButton sx={{ m: "auto", mr: 0 }} onClick={() => signOut()}>
                                 <LogoutIcon />
                             </IconButton>
                         </Stack>

@@ -1,4 +1,4 @@
-import { Box, IconButton, Typography, Stack, SvgIcon } from "@mui/material";
+import { Box, IconButton, Typography, Stack } from "@mui/material";
 
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
@@ -10,10 +10,11 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { useRouter } from "next/router";
 
 import { MouseEvent } from 'react';
-import { PostContent, ProfileAvatar } from "./Misc";
+import { PostContent, ConnectedAvatar } from "./Misc";
 import { Post, Profile } from "@prisma/client";
 import { trpc } from "utils/trpc";
 import { useSession } from "next-auth/react";
+import { DisplayNameVertical } from "components/Misc";
 
 const getHour = (date: Date) => {
     const text = date.toLocaleString();
@@ -94,25 +95,18 @@ const Post = ({
         >
             <Stack direction="column">
                 <Stack direction="row">
-                    <ProfileAvatar 
+                    <ConnectedAvatar
+                        username={owner.username}
                         image={owner.image}
                         linePos={(parentPostID && "top") || undefined}
-                        handleOpenProfile={handleOpenProfile}
                     />
 
-                    <Stack direction="column" mt="auto">
-                        <Stack direction="row">
-                            <Typography> {owner.displayName} </Typography>
-                            {owner.verified && 
-                                <SvgIcon fontSize="small" sx={{ ml: 0.5, color: "text.secondary" }}>
-                                    <path d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91c-1.31.67-2.2 1.91-2.2 3.34s.89 2.67 2.2 3.34c-.46 1.39-.21 2.9.8 3.91s2.52 1.26 3.91.81c.67 1.31 1.91 2.19 3.34 2.19s2.68-.88 3.34-2.19c1.39.45 2.9.2 3.91-.81s1.27-2.52.81-3.91c1.31-.67 2.19-1.91 2.19-3.34zm-11.71 4.2L6.8 12.46l1.41-1.42 2.26 2.26 4.8-5.23 1.47 1.36-6.2 6.77z"></path>
-                                </SvgIcon>
-                            }
-                        </Stack>
-                        <Typography color="text.dark" onClick={handleOpenProfile}>
-                            {"@" + owner.username}
-                        </Typography>
-                    </Stack>
+                    <DisplayNameVertical
+                        username={owner.username}
+                        displayName={owner.displayName}
+                        verified={owner.verified}
+                        sx={{ mt: "auto" }}
+                    />
 
                     <IconButton sx={{ m: "auto", mr: 0 }} onClick={handleOpenOptions} >
                         {sessionData?.user?.isAdmin 
@@ -149,11 +143,14 @@ const Post = ({
                     : null
                 } */}
 
-                <Typography color="text.dark" mt={2} mb={2}> {getHour(createdAt)} · {getDate(createdAt)} </Typography>
+                <Typography color="text.dark" mt={2} mb={2}> 
+                    {getHour(createdAt)} · {getDate(createdAt)} 
+                </Typography>
 
                 <Stack direction="row" spacing={3} pt={2} pb={2} borderTop="1px solid grey" borderBottom="1px solid grey">
+                    <Typography>{comments} Comments</Typography>
                     <Typography>{retweets} Retweets</Typography>
-                    <Typography>{5} Quote Tweets</Typography>
+                    {/* <Typography>{5} Quote Tweets</Typography> */}
                     <Typography>{likes} Likes</Typography>
                 </Stack>
 
@@ -161,18 +158,21 @@ const Post = ({
                     <IconButton>
                         <ChatBubbleIcon fontSize="small" />
                     </IconButton>
+
                     <IconButton
                         color={savedPostData?.retweet && "success" || "default"}
                         onClick={(e: MouseEvent<HTMLElement>) => handleSavePost(e, "retweet")}
                     >
                         <RepeatIcon fontSize="small" />
                     </IconButton>
+
                     <IconButton
                         color={savedPostData?.like && "error" || "default"}
                         onClick={(e: MouseEvent<HTMLElement>) => handleSavePost(e, "like")} 
                     >
                         <FavoriteIcon fontSize="small" />
                     </IconButton>
+
                     <IconButton>
                         <PublishIcon fontSize="small" />
                     </IconButton>

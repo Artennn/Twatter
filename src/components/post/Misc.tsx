@@ -1,18 +1,20 @@
 import React, { MouseEvent } from "react"
 import Link from "next/link"
 
-import { Stack, Avatar, Box, Typography } from "@mui/material"
+import { Stack, Box, Typography } from "@mui/material"
+
+import { Avatar } from "components/Misc"
 
 import { parseContent, ParsedContent } from "utils/contentParser"
 
-export const ProfileAvatar = ({ 
+export const ConnectedAvatar = ({
+    username,
     image,
     linePos,
-    handleOpenProfile,
 } : { 
+    username: string,
     image: string
     linePos?: "top" | "bottom",
-    handleOpenProfile: (e: MouseEvent<HTMLElement>) => void,
 }) => {
     return (
         <Stack direction="column" pr={1}>
@@ -25,12 +27,15 @@ export const ProfileAvatar = ({
                     mr: "auto",
                 }} />
             }
-            <Avatar
-                src={image}
-                alt="profile-pic"
-                onClick={handleOpenProfile}
-                sx={{ height: 48, width: 48, mt: linePos === "top"? 0 : 1 }}
+
+            <Avatar 
+                username={username} 
+                image={image} 
+                sx={{ 
+                    mt: linePos === "top"? 0 : 1
+                }} 
             />
+
             {linePos === "bottom" &&
                 <Box sx={{
                     bgcolor: "grey",

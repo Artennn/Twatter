@@ -45,7 +45,7 @@ const ProfilePreview = ({
                 }
             }}
         >
-            <Avatar username={profile.username} image={profile.image} />
+            <Avatar username={profile.username} image={profile.image} sx={{ mr: 1.5 }} />
 
             <Stack direction="column" width="100%">
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
