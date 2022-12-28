@@ -1,4 +1,5 @@
 import { GetServerSideProps, NextPage } from "next";
+import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { getServerAuthSession } from "server/common/get-server-auth-session";
 
@@ -10,11 +11,19 @@ import ProfilePreview from "components/ProfilePreview";
 
 import { trpc } from "utils/trpc";
 
+import { MouseEvent } from "react";
+
 const FollowersPage: NextPage<{ profileName: string }> = ({ profileName }) => {
+    const router = useRouter();
     const { data: sessionData } = useSession();
 
     const { data: profile } = trpc.profile.get.useQuery({ username: profileName });
     const { data: following } = trpc.follows.getFollowing.useQuery({ username: profileName });
+
+    const handleSwitchTab = (e: MouseEvent<HTMLElement>) => {
+        e.preventDefault();
+        router.push(`/profile/${profile?.username}/followers`);
+    }
 
     return (
         <MainLayout>
@@ -26,8 +35,8 @@ const FollowersPage: NextPage<{ profileName: string }> = ({ profileName }) => {
                     justifyContent: "space-around",
                 }
             }}>
-                <Tab value="followers" label="Followers" component="a" href={`followers`} />
-                <Tab value="following" label="Following" component="a" href={`following`} />
+                <Tab value="followers" label="Followers" onClick={handleSwitchTab} />
+                <Tab value="following" label="Following" />
             </Tabs>
 
             <>

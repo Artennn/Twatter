@@ -1,9 +1,13 @@
-import { trpc } from "utils/trpc";
+import { MouseEvent } from "react";
+import { useRouter } from "next/router";
 
 import { Stack, Typography, Button } from "@mui/material";
 
-import { Profile } from "@prisma/client";
 import { Avatar, DisplayNameVertical } from "./Misc";
+
+import { trpc } from "utils/trpc";
+
+import { Profile } from "@prisma/client";
 
 const ProfilePreview = ({
     profile,
@@ -14,11 +18,13 @@ const ProfilePreview = ({
     isFollowing: boolean,
     isOwner?: boolean,
 }) => {
+    const router = useRouter();
     const queryUtils = trpc.useContext();
     const { mutate: followMutate } = trpc.follows.follow.useMutation();
     const { mutate: unFollowMutate } = trpc.follows.unFollow.useMutation();
 
-    const handleToggleFollow = () => {
+    const handleToggleFollow = (e: MouseEvent<HTMLElement>) => {
+        e.stopPropagation();
         const mutate = isFollowing ? unFollowMutate : followMutate;
         mutate(profile.id, {
             onSuccess: () => {
@@ -31,6 +37,7 @@ const ProfilePreview = ({
         <Stack
             direction="row" 
             p={2} pt={1.5} pb={1.5}
+            onClick={() => router.push(`/profile/${profile.username}`)}
             sx={{
                 cursor: "pointer",
                 "&:hover": {

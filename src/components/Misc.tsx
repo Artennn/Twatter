@@ -1,4 +1,29 @@
-import { Avatar as MuiAvatar, Stack, Typography, SvgIcon, Link } from "@mui/material"
+import { Avatar as MuiAvatar, Stack, Typography, SvgIcon, Link as MuiLink } from "@mui/material"
+import NextLink from "next/link"
+
+export const Link = ({
+    href,
+    underline,
+    children,
+} : {
+    href: string,
+    underline?: "always" | "hover" | "none",
+    children: JSX.Element | JSX.Element[],
+}) => {
+
+    return (
+        <NextLink href={href} legacyBehavior>
+            <MuiLink 
+                href={href} 
+                display="inherit"
+                color="inherit" 
+                underline={underline || "hover"}
+            >
+                {children}
+            </MuiLink>
+        </NextLink>
+    )
+}
 
 export const Avatar = ({
     username,
@@ -12,7 +37,6 @@ export const Avatar = ({
             <MuiAvatar
                 src={image}
                 alt="profile-pic"
-                onClick={() => {}}
                 sx={{ height: 48, width: 48, mr: 1.5 }}
             />
         </Link>
@@ -32,11 +56,7 @@ export const DisplayNameVertical = ({
     return (
         <Stack direction="column">
             <Stack direction="row">
-                <Link 
-                    href={`/profile/${username}`}
-                    underline="hover"
-                    color="inherit"
-                >
+                <Link href={`/profile/${username}`}>
                     <Typography fontWeight={500}> {displayName} </Typography>
                 </Link>
 
@@ -47,12 +67,8 @@ export const DisplayNameVertical = ({
                 }
             </Stack>
 
-            <Link 
-                href={`/profile/${username}`}
-                underline="none"
-                color="inherit"
-            >
-                <Typography color="text.dark" onClick={() => {}}>
+            <Link href={`/profile/${username}`} underline="none">
+                <Typography color="text.dark">
                     {"@" + username}
                 </Typography>
             </Link>
