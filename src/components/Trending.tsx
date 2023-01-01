@@ -12,10 +12,10 @@ const Trending = () => {
     //const shouldBeShown = useMediaQuery('(min-width:1000px)');
     const shouldBeShown = useMediaQuery('(min-width:1270px)');
 
-    if (!shouldBeShown) return <Box sx={{ flexGrow: 1, width: 350 }} bgcolor="rgb(0, 0, 0)" />
+    if (!shouldBeShown) return null;
 
     return (
-        <Box sx={{ flexGrow: 1}} minHeight="100vh" p={2} pl={4} bgcolor="rgb(0, 0, 0)">
+        <Box minHeight="100vh" p={2} pl={4}>
             <Box 
                 position="sticky"
                 top={16}

@@ -6,20 +6,19 @@ import { trpc } from "../utils/trpc";
 
 import { CssBaseline, ThemeProvider } from "@mui/material";
 
-import { darkTheme, GlobalStyles } from "../utils/theme";
+import { darkTheme } from "../utils/theme";
 
 const MyApp: AppType<{ session: Session | null }> = ({
-  Component,
-  pageProps: { session, ...pageProps },
+    Component,
+    pageProps: { session, ...pageProps },
 }) => {
-  return (
-    <SessionProvider session={session}>
-      <ThemeProvider theme={darkTheme}>
-        <CssBaseline />
-        <GlobalStyles />
-        <Component {...pageProps} />
-      </ThemeProvider>
-    </SessionProvider>
-  );
+    return (
+        <SessionProvider session={session}>
+            <ThemeProvider theme={darkTheme}>
+                <CssBaseline />
+                <Component {...pageProps} />
+            </ThemeProvider>
+        </SessionProvider>
+    );
 };
 export default trpc.withTRPC(MyApp);

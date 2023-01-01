@@ -30,7 +30,7 @@ const PostPage: NextPage<{ postID: string }> = ({ postID }) => {
         <MainLayout>
             <NavBar goBack title="Tweet" />
             <Box textAlign="center" mt={10}>
-                <Typography> This post doesn't exist :( </Typography>
+                <Typography> {"This post doesn't exist :("} </Typography>
             </Box>
         </MainLayout>
     )
@@ -76,6 +76,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
             }
         }
     }
+
     return {
         props: {
             postID: id,

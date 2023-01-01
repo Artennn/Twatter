@@ -49,6 +49,20 @@ export const Avatar = ({
     )
 }
 
+export const Mention = ({
+    username,
+    sx,
+} : {
+    username: string,
+    sx?: SxProps,
+}) => (
+    <Link href={`/profile/${username}`} underline="none">
+        <Typography color="text.dark" sx={{ ...sx }}>
+            {"@" + username}
+        </Typography>
+    </Link>
+)
+
 export const DisplayNameVertical = ({
     displayName,
     username,
@@ -75,11 +89,7 @@ export const DisplayNameVertical = ({
                 }
             </Stack>
 
-            <Link href={`/profile/${username}`} underline="none">
-                <Typography color="text.dark">
-                    {"@" + username}
-                </Typography>
-            </Link>
+            <Mention username={username} />
         </Stack>
     )
 }
@@ -113,11 +123,7 @@ export const DisplayNameHorizontal = ({
                 </SvgIcon>
             }
 
-            <Link href={`/profile/${username}`} underline="none">
-                <Typography color="text.dark" ml={1} mr={1}>
-                    {"@" + username}
-                </Typography>
-            </Link>
+            <Mention username={username} sx={{ ml:1 , mr: 1 }} />
         </>
     )
 }

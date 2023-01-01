@@ -65,7 +65,7 @@ const NavBar = ({
                     <Typography fontSize={20} fontWeight={700}> 
                         {title}
                     </Typography>
-                    <Typography variant="subtitle2"> {subtitle} </Typography>
+                    <Typography variant="subtitle2" color="text.dark"> {subtitle} </Typography>
                 </Stack>
                 : null
             }

@@ -1,5 +1,4 @@
 import { createTheme } from "@mui/material";
-import GlobalStylesMUI from "@mui/material/GlobalStyles";
 
 declare module '@mui/material/styles' {
     export interface TypeText {
@@ -27,7 +26,7 @@ export const darkTheme = createTheme({
         },
         background: {
             grey1: "rgba(91, 112, 131, 0.4)",
-            grey2: "rgb(22, 24, 28)",
+            grey2: "rgb(28 30 38)", // 28 30 38
             hover: "rgba(255, 255, 255, 0.07)",
         },
         action: {
@@ -42,22 +41,26 @@ export const darkTheme = createTheme({
             textTransform: "none",
         }
     },
-})
-
-const styles = {
-    "::-webkit-scrollbar": {
-        backgroundColor: "#202324",
-        color: "#aba499",
-    },
-    "::-webkit-scrollbar-corner": {
-        backgroundColor: "#181a1b",
-    },
-    "::-webkit-scrollbar-thumb": {
-        backgroundColor: "#454a4d",
-    },
-    "a": {
-        color: darkTheme.palette.text.secondary
+    components: {
+        MuiCssBaseline: {
+            styleOverrides: (theme) =>  ({
+                html: {
+                    overflowY: "scroll",
+                },
+                "::-webkit-scrollbar": {
+                    backgroundColor: "#202324",
+                    color: "#aba499",
+                },
+                "::-webkit-scrollbar-corner": {
+                    backgroundColor: "#181a1b",
+                },
+                "::-webkit-scrollbar-thumb": {
+                    backgroundColor: "#454a4d",
+                },
+                "a": {
+                    color: theme.palette.text.secondary
+                },
+            }),
+        }
     }
-}
-
-export const GlobalStyles = () => <GlobalStylesMUI styles={styles} />;
+})

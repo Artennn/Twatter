@@ -56,7 +56,7 @@ const ProfilePage: NextPage<{ profileName: string, profileTab: ProfileTab }> = (
         <MainLayout>
             <NavBar goBack title="Profile" />
             <Box textAlign="center" mt={10}>
-                <Typography> This account doesn't exist :( </Typography>
+                <Typography> {"This account doesn't exist :("} </Typography>
             </Box>
         </MainLayout>
     )

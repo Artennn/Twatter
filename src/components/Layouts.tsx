@@ -7,8 +7,9 @@ export const MainLayout = ({ children }: { children: JSX.Element | JSX.Element[]
     return (
         <Box sx={{ 
             display: "flex", 
-            flexDirection: "row", 
-            width: "100%" 
+            flexDirection: "row",
+            justifyContent: "center",
+            width: "100%"
         }}
         >
             <SideBar />
@@ -17,7 +18,7 @@ export const MainLayout = ({ children }: { children: JSX.Element | JSX.Element[]
                 width="100%" 
                 maxWidth={600} 
                 minHeight="100vh"
-                height="100%" 
+                height="100%"
                 bgcolor="common.black"
                 borderLeft="1px solid grey"
                 borderRight="1px solid grey"

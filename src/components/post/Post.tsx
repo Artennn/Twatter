@@ -14,7 +14,7 @@ import { PostContent, ConnectedAvatar } from "./Misc";
 import { Post, Profile } from "@prisma/client";
 import { trpc } from "utils/trpc";
 import { useSession } from "next-auth/react";
-import { DisplayNameVertical } from "components/Misc";
+import { DisplayNameVertical, Mention } from "components/Misc";
 
 const getHour = (date: Date) => {
     const text = date.toLocaleString();
@@ -87,10 +87,8 @@ const Post = ({
     return (
         <Box 
             pl={2} pr={2} 
-            onClick={handleOpenPost}
             sx={{ 
                 borderBottom: "1px grey solid", 
-                cursor: "pointer" 
             }}
         >
             <Stack direction="column">
@@ -119,9 +117,7 @@ const Post = ({
                 {parentOwner &&
                     <Stack direction="row" marginTop={1}>
                         <Typography color="text.dark"> Replying to </Typography>
-                        <Typography color="text.dark" ml={1} onClick={handleOpenProfile}>
-                            {"@" + parentOwner?.username}
-                        </Typography>
+                        <Mention username={parentOwner.username} sx={{ ml: 1 }} />
                     </Stack>
                 }
 
@@ -177,7 +173,6 @@ const Post = ({
                         <PublishIcon fontSize="small" />
                     </IconButton>
                 </Stack>
-
             </Stack>
         </Box>
     )

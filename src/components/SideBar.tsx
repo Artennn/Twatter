@@ -88,7 +88,7 @@ const SideBar = () => {
     }
 
     return (
-        <Box sx={{ flexGrow: 1 }}>
+        <Box>
             <Box marginLeft="auto" width={250} height="100%">
                 <Box p={1} height="100%" position="fixed" width={250}>
                     <Stack direction="column" height="100%" >
