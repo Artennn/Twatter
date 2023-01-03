@@ -7,7 +7,7 @@ import Feed from "../components/Feed";
 const Home: NextPage = () => {
 
     return (
-        <MainLayout>
+        <MainLayout title="Home">
             <Feed />
         </MainLayout>
     );

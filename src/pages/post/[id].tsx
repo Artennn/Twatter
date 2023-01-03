@@ -36,7 +36,7 @@ const PostPage: NextPage<{ postID: string }> = ({ postID }) => {
     )
 
     return (
-        <MainLayout>
+        <MainLayout title={`${post.owner.displayName} on Twatter`}>
             <NavBar goBack title="Tweet" />
             <>
                 { parentPost &&

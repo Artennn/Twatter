@@ -26,7 +26,7 @@ const FollowersPage: NextPage<{ profileName: string }> = ({ profileName }) => {
     }
 
     return (
-        <MainLayout>
+        <MainLayout title={`People following ${profile?.displayName}`}>
             <NavBar goBack title={profile?.displayName} subtitle={`@${profile?.username}`} />
             
             <Tabs centered value="followers" sx={{

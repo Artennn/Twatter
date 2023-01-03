@@ -1,32 +1,47 @@
-import { Box } from "@mui/material"
+import { Box } from "@mui/material";
+import Head from "next/head";
 
-import SideBar from "./SideBar"
-import Trending from "./Trending"
+import SideBar from "./SideBar";
+import Trending from "./Trending";
 
-export const MainLayout = ({ children }: { children: JSX.Element | JSX.Element[] }) => {
+export const MainLayout = ({
+    children,
+    title,
+}: {
+    children: JSX.Element | JSX.Element[];
+    title?: string;
+}) => {
     return (
-        <Box sx={{ 
-            display: "flex", 
-            flexDirection: "row",
-            justifyContent: "center",
-            width: "100%"
-        }}
-        >
-            <SideBar />
+        <>
+            <Head>
+                <title>{title ? `${title} / Twatter` : "Twatter"}</title>
+            </Head>
 
-            <Box 
-                width="100%" 
-                maxWidth={600} 
-                minHeight="100vh"
-                height="100%"
-                bgcolor="common.black"
-                borderLeft="1px solid grey"
-                borderRight="1px solid grey"
+            <Box
+                component="main"
+                sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    width: "100%",
+                }}
             >
-                {children}
-            </Box>
+                <SideBar />
 
-            <Trending />
-        </Box>
-    )
-}
+                <Box
+                    width="100%"
+                    maxWidth={600}
+                    minHeight="100vh"
+                    height="100%"
+                    bgcolor="common.black"
+                    borderLeft="1px solid grey"
+                    borderRight="1px solid grey"
+                >
+                    {children}
+                </Box>
+
+                <Trending />
+            </Box>
+        </>
+    );
+};

@@ -30,7 +30,7 @@ const LoginPage: NextPage = ({}) => {
     }
 
     return (
-        <AuthLayout>
+        <AuthLayout title={`Login to Twatter`}>
             <Login handleLogin={handleLogin} error={error} />
             <Backdrop open={loading || false}>
                 <CircularProgress size={75} />

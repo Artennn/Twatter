@@ -58,7 +58,7 @@ const RegisterPage: NextPage<{ authed: boolean }> = ({ authed }) => {
     }
 
     if (authed) return (
-        <AuthLayout>
+        <AuthLayout title="Create new Profile">
             <NewAccount handleCreate={handleCreateAccount} error={error} />
             <Backdrop open={loading || false}>
                 <CircularProgress size={75} />
@@ -67,7 +67,7 @@ const RegisterPage: NextPage<{ authed: boolean }> = ({ authed }) => {
     )
 
     return (
-        <AuthLayout>
+        <AuthLayout title="Register">
             <NewLoginMethod handleCreate={handleCreateLoginMethod} error={error} />
             <Backdrop open={loading || false}>
                 <CircularProgress size={75} />

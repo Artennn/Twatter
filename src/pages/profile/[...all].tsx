@@ -62,7 +62,7 @@ const ProfilePage: NextPage<{ profileName: string, profileTab: ProfileTab }> = (
     )
 
     return (
-        <MainLayout>
+        <MainLayout title={`${profile.displayName} (@${profile.username})`}>
             <NavBar goBack title={profile?.displayName} subtitle={`${posts?.length} Tweets`} />
             <>
                 <Profile
