@@ -1,4 +1,4 @@
-import { Badge, Box, ButtonBase, IconButton, Skeleton, Stack, SvgIcon, Typography, useMediaQuery } from "@mui/material";
+import { Badge, Box, ButtonBase, IconButton, Skeleton, Stack, SvgIcon, Typography } from "@mui/material";
 
 import LogoutIcon from '@mui/icons-material/Logout';
 
@@ -10,7 +10,7 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import PersonIcon from '@mui/icons-material/Person';
 
-import { SvgIconComponent } from "@mui/icons-material";
+import type { SvgIconComponent } from "@mui/icons-material";
 
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -81,7 +81,7 @@ const SideBar = () => {
 
     const currentPage = router.asPath
 
-    const shouldBeExpanded = useMediaQuery('(min-width:1300px)');
+    //const shouldBeExpanded = useMediaQuery('(min-width:1300px)');
 
     const handleRedirect = (url: string) => {
         router.push(url);

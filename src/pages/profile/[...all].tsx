@@ -2,7 +2,7 @@ import React from "react";
 import { trpc } from "utils/trpc";
 
 import { getServerAuthSession } from "server/common/get-server-auth-session";
-import { GetServerSideProps, NextPage } from "next";
+import type { GetServerSideProps, NextPage } from "next";
 import { useSession } from "next-auth/react";
 
 import { Box, CircularProgress, Typography } from "@mui/material";

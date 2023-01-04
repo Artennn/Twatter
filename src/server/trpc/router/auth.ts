@@ -33,10 +33,11 @@ export const authRouter = router({
     createLoginMethod: publicProcedure
         .input(LoginValidation)
         .mutation(async ({ input, ctx }) => {
-            // TODO bcrypt
             const { email, password, password2 } = input;
+            if (password !== password2) return false;
+
             const hash = bcrypt.hashSync(password, SALT_ROUNDS);
-            const result = await ctx.prisma.user.create({ 
+            const result = !!await ctx.prisma.user.create({ 
                 data: {
                     email,
                     password: hash,

@@ -6,7 +6,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "../../../server/db/client";
 
 import { env } from "../../../env/server.mjs";
-import { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiRequest, NextApiResponse } from "next";
 import { decode, encode } from "next-auth/jwt";
 
 import bcrypt from "bcrypt";
@@ -54,7 +54,7 @@ export function requestWrapper(
                 }
                 return session;
             },
-            async signIn({ user, account, profile, email, credentials }) {
+            async signIn({ user, account, profile }) {
                 // Check if this sign in callback is being called in the credentials authentication flow. 
                 // If so, use the next-auth adapter to create a session entry in the database 
                 // (SignIn is called after authorize so we can safely assume the user is valid and already authenticated).
@@ -105,7 +105,7 @@ export function requestWrapper(
             GoogleProvider({
                 clientId: env.GOOGLE_CLIENT_ID,
                 clientSecret: env.GOOGLE_CLIENT_SECRET,
-                profile: (profile, tokens) => {
+                profile: (profile) => {
                     return {
                         id: profile.sub,
                         email: profile.email

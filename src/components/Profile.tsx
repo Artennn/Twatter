@@ -1,7 +1,5 @@
 import { Avatar, Box, Stack, Button, IconButton, Tab, Tabs, Typography, SvgIcon } from "@mui/material";
 
-import { Profile as ProfileDB } from "@prisma/client";
-
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import PendingIcon from '@mui/icons-material/Pending';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
@@ -10,8 +8,10 @@ import { Link } from "./Misc";
 import { EditProfileDialog } from "./dialogs/EditProfile";
 
 import { useRouter } from "next/router";
-import { ProfileTab } from "pages/profile/[...all]";
 import { useState } from "react";
+
+import type { ProfileTab } from "pages/profile/[...all]";
+import type { Profile as ProfileDB } from "@prisma/client";
 
 const Profile = ({
     profile,
@@ -47,8 +47,9 @@ const Profile = ({
             <Box height={170}>
                 <img
                     src={profile.background || "https://pbs.twimg.com/profile_banners/44196397/1576183471/600x200"}
+                    alt="background"
+                    title="background"
                     style={{ height: "100%", width: "100%", objectFit: "cover" }}
-                    title="profile-picture"
                 />
             </Box>
 

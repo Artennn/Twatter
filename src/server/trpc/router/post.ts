@@ -108,7 +108,7 @@ export const postRouter = router({
                             like: liked,
                             retweet: retweeted,
                             profile: {
-                                username: input.username,
+                                username: username,
                             }
                         }
                     }

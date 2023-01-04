@@ -2,11 +2,13 @@ import { Box, Stack, Button, Dialog, IconButton, SvgIcon, Typography } from "@mu
 
 import CloseIcon from "@mui/icons-material/Close";
 
-import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import { FormProvider, type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod';
-import { TypeOf, z } from "zod";
+import { type TypeOf, z } from "zod";
+
 import { ControlledTextField } from "components/Inputs";
-import { Profile } from "@prisma/client";
+
+import type { Profile } from "@prisma/client";
 import { trpc } from "utils/trpc";
 
 export const EditProfileValidation = z.object({

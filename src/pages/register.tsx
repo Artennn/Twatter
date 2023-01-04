@@ -1,13 +1,13 @@
 import { useState } from "react";
-import { GetServerSideProps, type NextPage } from "next";
+import type { GetServerSideProps, NextPage } from "next";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 
 import { trpc } from "../utils/trpc";
 import { getServerAuthSession } from "server/common/get-server-auth-session";
 
-import { NewLoginMethod, LoginMethod } from "../components/auth/NewLoginMethod";
-import { Account, NewAccount } from "../components/auth/NewAccount";
+import { NewLoginMethod, type LoginMethod } from "../components/auth/NewLoginMethod";
+import { type Account, NewAccount } from "../components/auth/NewAccount";
 import { AuthLayout } from "components/auth/Layouts";
 
 import { Backdrop, CircularProgress } from "@mui/material";

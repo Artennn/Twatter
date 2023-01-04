@@ -1,4 +1,4 @@
-import { GetServerSideProps, NextPage } from "next";
+import type { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { getServerAuthSession } from "server/common/get-server-auth-session";
@@ -11,7 +11,7 @@ import ProfilePreview from "components/ProfilePreview";
 
 import { trpc } from "utils/trpc";
 
-import { MouseEvent } from "react";
+import type { MouseEvent } from "react";
 
 const FollowersPage: NextPage<{ profileName: string }> = ({ profileName }) => {
     const router = useRouter();

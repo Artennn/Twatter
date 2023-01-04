@@ -1,11 +1,11 @@
-import React, { MouseEvent } from "react"
+import React, { type MouseEvent } from "react"
 import Link from "next/link"
 
 import { Stack, Box, Typography } from "@mui/material"
 
 import { Avatar } from "components/Misc"
 
-import { parseContent, ParsedContent } from "utils/contentParser"
+import { parseContent, type ParsedContent } from "utils/contentParser"
 
 export const ConnectedAvatar = ({
     username,
@@ -108,6 +108,7 @@ export const PostContent = ({
                     <img
                         src={images[0].text}
                         title="image"
+                        alt=""
                         style={{ maxWidth: "100%", borderRadius: 20, border: "1px solid grey" }}
                         loading="lazy"
                     />

@@ -1,4 +1,4 @@
-import { MouseEvent } from "react";
+import type { MouseEvent } from "react";
 import { useRouter } from "next/router";
 
 import { Stack, Typography, Button } from "@mui/material";
@@ -7,7 +7,7 @@ import { Avatar, DisplayNameVertical } from "./Misc";
 
 import { trpc } from "utils/trpc";
 
-import { Profile } from "@prisma/client";
+import type { Profile } from "@prisma/client";
 
 const ProfilePreview = ({
     profile,

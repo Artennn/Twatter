@@ -1,4 +1,4 @@
-import { Avatar as MuiAvatar, Stack, Typography, SvgIcon, Link as MuiLink, SxProps, Skeleton } from "@mui/material"
+import { Avatar as MuiAvatar, Stack, Typography, SvgIcon, Link as MuiLink, type SxProps, Skeleton } from "@mui/material"
 import NextLink from "next/link"
 
 export const Link = ({

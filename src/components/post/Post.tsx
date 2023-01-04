@@ -9,9 +9,9 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 import { useRouter } from "next/router";
 
-import { MouseEvent } from 'react';
+import type { MouseEvent } from 'react';
 import { PostContent, ConnectedAvatar } from "./Misc";
-import { Post, Profile } from "@prisma/client";
+import { Post, type Profile } from "@prisma/client";
 import { trpc } from "utils/trpc";
 import { useSession } from "next-auth/react";
 import { DisplayNameVertical, Mention } from "components/Misc";
@@ -41,20 +41,6 @@ const Post = ({
     const router = useRouter();
     const { data: sessionData } = useSession();
     const { id, content, likes, retweets, createdAt, owner, parentPostID } = data;
-
-    const handleOpenProfile = (e: MouseEvent<HTMLElement>) => {
-        e.stopPropagation();
-        router.push(`/profile/${owner.username}`);
-    }
-
-    const handleOpenParentProfile = (e: MouseEvent<HTMLElement>) => {
-        e.stopPropagation();
-        parentOwner && router.push(`/profile/${parentOwner.username}`);
-    }
-
-    const handleOpenPost = () => {
-        router.push(`/post/${data.id}`)
-    }
 
     const queryUtils = trpc.useContext();
     const { comments } = data._count;

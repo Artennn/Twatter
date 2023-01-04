@@ -1,4 +1,4 @@
-import { Box, IconButton, Typography, Stack, SvgIcon } from "@mui/material";
+import { Box, IconButton, Typography, Stack } from "@mui/material";
 
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
@@ -8,8 +8,8 @@ import PublishIcon from '@mui/icons-material/Publish';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 import { useRouter } from "next/router";
-import { MouseEvent } from 'react';
-import { Post, Profile } from "@prisma/client";
+import type { MouseEvent } from 'react';
+import type { Post, Profile } from "@prisma/client";
 
 import { PostContent, ConnectedAvatar } from "./Misc";
 import { trpc } from "utils/trpc";
@@ -38,11 +38,6 @@ const PostPreview = ({
     const router = useRouter();
     const { data: sessionData } = useSession();
     const { id, content, likes, retweets, createdAt, owner } = data;
-
-    const handleOpenProfile = (e: MouseEvent<HTMLElement>) => {
-        e.stopPropagation();
-        router.push(`/profile/${owner.username}`);
-    }
 
     const handleOpenParentProfile = (e: MouseEvent<HTMLElement>) => {
         e.stopPropagation();

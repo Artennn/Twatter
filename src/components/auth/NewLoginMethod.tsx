@@ -1,6 +1,6 @@
-import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import { FormProvider, type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod';
-import { TypeOf, z } from "zod";
+import { type TypeOf, z } from "zod";
 
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";

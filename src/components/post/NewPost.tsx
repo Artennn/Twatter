@@ -7,7 +7,7 @@ import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 
-import { ChangeEvent, useState } from "react";
+import { type ChangeEvent, useState } from "react";
 import { useSession } from "next-auth/react";
 import { trpc } from "../../utils/trpc";
 

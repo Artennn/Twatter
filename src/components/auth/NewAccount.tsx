@@ -1,6 +1,6 @@
-import { Controller, FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import { Controller, FormProvider, type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod';
-import { TypeOf, z } from "zod";
+import { type TypeOf, z } from "zod";
 
 import { Box, Button, Stack, IconButton, SvgIcon, Typography, Checkbox } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
