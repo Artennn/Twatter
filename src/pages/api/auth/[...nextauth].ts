@@ -1,5 +1,6 @@
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google"
+import GithubProvider from "next-auth/providers/github";
 import CredentialProvider from "next-auth/providers/credentials";
 
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
@@ -69,6 +70,16 @@ export const authOptions: NextAuthOptions = {
             profile: (profile) => {
                 return {
                     id: profile.sub,
+                    email: profile.email,
+                };
+            },
+        }),
+        GithubProvider({
+            clientId: env.GITHUB_CLIENT_ID,
+            clientSecret: env.GITHUB_CLIENT_SECRET,
+            profile: (profile) => {
+                return {
+                    id: profile.id,
                     email: profile.email,
                 };
             },
