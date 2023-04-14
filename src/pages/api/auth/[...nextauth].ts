@@ -7,141 +7,105 @@ import { prisma } from "../../../server/db/client";
 
 import { env } from "../../../env/server.mjs";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { decode, encode } from "next-auth/jwt";
 
 import bcrypt from "bcrypt";
-import { randomUUID } from "crypto";
-import Cookies from "cookies";
 
-const CREDENTIALS_SESSION_MAX_AGE = 60 * 60 * 24 * 30; // 30 days
+export const authOptions: NextAuthOptions = {
+    callbacks: {
+        async jwt({ token, account, profile, user }) {
+            if (token.user) {
+                // check if user created a profile and apply it to the session
+                if (token.user.id && !token.user.profileID) {
+                    const result = await prisma.user.findUnique({
+                        where: { id: token.user.id },
+                        select: { profileID: true },
+                    });
+                    if (result?.profileID)
+                        token.user.profileID = result.profileID;
+                }
+            }
+            // apply user data to token
+            if (user) {
+                if (user.id && !user.profileID) {
+                    const result = await prisma.user.findUnique({
+                        where: { id: user.id },
+                        select: { profileID: true },
+                    });
+                    if (result?.profileID) user.profileID = result.profileID;
+                }
+                token.user = {
+                    id: user.id,
+                    profileID: user.profileID,
+                    isAdmin: user.isAdmin,
+                };
+            }
+            return token;
+        },
+        session({ session, token }) {
+            // apply user data stored in token to the session
+            if (token.user) {
+                const user = token.user;
+                session.user = {
+                    id: user.id,
+                    profileID: user.profileID,
+                    isAdmin: user.isAdmin,
+                };
+            }
+            return session;
+        },
+    },
+    adapter: PrismaAdapter(prisma),
+    secret: env.NEXTAUTH_SECRET,
+    pages: {
+        signIn: "/login",
+    },
+    session: {
+        strategy: "jwt",
+    },
+    providers: [
+        GoogleProvider({
+            clientId: env.GOOGLE_CLIENT_ID,
+            clientSecret: env.GOOGLE_CLIENT_SECRET,
+            profile: (profile) => {
+                return {
+                    id: profile.sub,
+                    email: profile.email,
+                };
+            },
+        }),
+        CredentialProvider({
+            name: "Credentials",
+            credentials: {
+                email: { label: "Email", type: "text" },
+                password: { label: "Password", type: "password" },
+            },
+            async authorize(credentials) {
+                if (!credentials) return null;
+                const { email, password } = credentials;
+
+                const user = await prisma.user.findUnique({
+                    where: {
+                        email: email,
+                    },
+                });
+                if (!user) return null;
+                if (user.password === null) return null;
+
+                if (!bcrypt.compareSync(password, user.password)) return null;
+
+                // cast profileID to number | undefined from prisma type (number | null)
+                // same with isAdmin
+                return {
+                    id: user.id,
+                    profileID: user.profileID ? user.profileID : undefined,
+                    isAdmin: user.isAdmin ? true : undefined,
+                };
+            },
+        }),
+    ],
+};
 
 export const handler = async (pReq: NextApiRequest, pRes: NextApiResponse) => {
-    const [req, res, options] = requestWrapper(pReq, pRes);
-    return await NextAuth(req, res, options);
+    return await NextAuth(pReq, pRes, authOptions);
 };
 export default handler;
-
-const checkIfCredentials = (req: NextApiRequest) => 
-    req.query.nextauth?.includes("callback") &&
-    req.query.nextauth?.includes("credentials") &&
-    req.method === "POST"
-
-export function requestWrapper(
-    req: NextApiRequest,
-    res: NextApiResponse
-): [req: NextApiRequest, res: NextApiResponse, opts: NextAuthOptions] {
-    const generateSessionToken = () => randomUUID();
-
-    const fromDate = (time: number, date = Date.now()) =>
-        new Date(date + time * 1000);
-
-    const adapter = PrismaAdapter(prisma);
-
-    const opts: NextAuthOptions = {
-        pages: {
-            signIn: "/login",
-        },
-        adapter: adapter,
-        callbacks: {
-            session({ session, user }) {
-                //console.log({session, user})
-                if (session.user) {
-                    session.user = {
-                        authID: user.id,
-                        profileID: user.profileID,
-                        isAdmin: user.isAdmin,
-                    }
-                }
-                return session;
-            },
-            async signIn({ user, account, profile }) {
-                // Check if this sign in callback is being called in the credentials authentication flow. 
-                // If so, use the next-auth adapter to create a session entry in the database 
-                // (SignIn is called after authorize so we can safely assume the user is valid and already authenticated).
-                if (checkIfCredentials(req)) {
-                    if (user) {
-                        const sessionToken = generateSessionToken();
-                        const sessionMaxAge = CREDENTIALS_SESSION_MAX_AGE;
-                        const sessionExpiry = fromDate(sessionMaxAge);
-
-                        await adapter.createSession({
-                            sessionToken: sessionToken,
-                            userId: user.id,
-                            expires: sessionExpiry,
-                        });
-
-                        const cookies = new Cookies(req, res);
-                        cookies.set("next-auth.session-token", sessionToken, {
-                            expires: sessionExpiry,
-                        });
-                    }
-                }
-                if (account?.provider === "google") {
-                    return profile?.email?.endsWith("@pollub.edu.pl")? true : false
-                }
-                return true;
-            },
-        },
-        jwt: {
-            encode: async ({ token, secret, maxAge }) => {
-                if (checkIfCredentials(req)) {
-                    const cookies = new Cookies(req, res);
-                    const cookie = cookies.get("next-auth.session-token");
-                    if (cookie) return cookie;
-                    return "";
-                }
-                // Revert to default behaviour when not in the credentials provider callback flow
-                return encode({ token, secret, maxAge });
-            },
-            decode: async ({ token, secret }) => {
-                if (checkIfCredentials(req)) return null;
-                // Revert to default behaviour when not in the credentials provider callback flow
-                return decode({ token, secret });
-            },
-        },
-        secret: env.NEXTAUTH_SECRET,
-        //debug: true,
-        providers: [
-            GoogleProvider({
-                clientId: env.GOOGLE_CLIENT_ID,
-                clientSecret: env.GOOGLE_CLIENT_SECRET,
-                profile: (profile) => {
-                    return {
-                        id: profile.sub,
-                        email: profile.email
-                    };
-                },
-            }),
-            CredentialProvider({
-                name: "Credentials",
-                credentials: {
-                    email: { label: "Email", type: "text" },
-                    password: { label: "Password", type: "password" },
-                },
-                async authorize(credentials) {
-                    if (!credentials) return null;
-                    const { email, password } = credentials;
-
-                    const user = await prisma.user.findUnique({
-                        where: {
-                            email: email,
-                        },
-                    });
-                    if (!user) return null;
-                    if (user.password === null) return null;
-
-                    if (!bcrypt.compareSync(password, user.password)) return null;
-
-                    // cast profileID to number | undefined from prisma type (number | null)
-                    // same with isAdmin
-                    return { 
-                        ...user, 
-                        profileID: user.profileID? user.profileID : undefined,
-                        isAdmin: user.isAdmin? true : undefined,
-                    };
-                },
-            }),
-        ],
-    };
-    return [req, res, opts];
-}

@@ -78,7 +78,7 @@ const RegisterPage: NextPage<{ authed: boolean }> = ({ authed }) => {
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const session = await getServerAuthSession(ctx);
-    const authed = session?.user?.authID? true : false;
+    const authed = session?.user?.id? true : false;
 
     if (session?.user?.profileID) {    
         return {

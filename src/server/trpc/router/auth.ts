@@ -23,7 +23,7 @@ export const authRouter = router({
 
             return !!await ctx.prisma.user.update({
                 where: {
-                    id: ctx.session.user.authID,
+                    id: ctx.session.user.id,
                 },
                 data: {
                     profileID: account.id,
