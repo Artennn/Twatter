@@ -13,6 +13,8 @@ import { useState } from "react";
 import type { ProfileTab } from "pages/profile/[...all]";
 import type { Profile as ProfileDB } from "@prisma/client";
 
+import moment from "moment";
+
 const Profile = ({
     profile,
     isOwner,
@@ -112,8 +114,10 @@ const Profile = ({
                 }
 
                 <Stack direction="row">
-                    <CalendarMonthIcon fontSize="small"/>
-                    <Typography variant="subtitle2" ml={1}>Joined June 2009</Typography>
+                    <CalendarMonthIcon fontSize="small" />
+                    <Typography variant="subtitle2" ml={1}>
+                        Joined {moment(profile.createdAt).format("MMM YYYY")}
+                    </Typography>
                 </Stack>
 
                 <Stack direction="row" mt={1}>

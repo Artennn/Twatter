@@ -62,6 +62,7 @@ model Profile {
   description String?
   background  String?
   verified    Boolean?
+  createdAt   DateTime @default(now())
   user        User[]
   posts       Post[]
   savedPosts  SavedPost[]
