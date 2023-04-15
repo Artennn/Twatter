@@ -72,14 +72,25 @@ const Profile = ({
                     <PendingIcon />
                 </IconButton>
 
-                {isOwner 
-                    ? <Button variant="outlined" onClick={handleToggleDialog}>
-                        Edytuj profil
+                {isOwner ? (
+                    <Button variant="contained" sx={{ borderRadius: 5}} onClick={handleToggleDialog}>
+                        Edit profile
                     </Button>
-                    : <Button variant="outlined" onClick={handleFollow} >
+                ) : (
+                    <Button
+                        variant="contained"
+                        color={following ? "primary" : "secondary"}
+                        sx={{
+                            borderRadius: 5,
+                            "&:hover": {
+                                bgcolor: following ? "red" : "",
+                            },
+                        }}
+                        onClick={handleFollow}
+                    >
                         {following ? "Following" : "Follow"}
                     </Button>
-                }
+                )}
             </Stack>
 
             {showDialog && <EditProfileDialog profile={profile} onClose={handleToggleDialog} />}
