@@ -1,6 +1,6 @@
 import { router, publicProcedure, protectedProcedure } from "../trpc";
 
-import { AccountValidation } from "../../../components/auth/NewAccount";
+import { ProfileValidation } from "../../../components/auth/NewProfile";
 import { LoginValidation } from "../../../components/auth/NewLoginMethod";
 
 import bcrypt from "bcrypt";
@@ -8,27 +8,27 @@ import bcrypt from "bcrypt";
 const SALT_ROUNDS = 15;
 
 export const authRouter = router({
-    createAccount: protectedProcedure
-        .input(AccountValidation)
+    createProfile: protectedProcedure
+        .input(ProfileValidation)
         .mutation(async ({ input, ctx }) => {
-            const account = await ctx.prisma.profile.create({
+            const profile = await ctx.prisma.profile.create({
                 data: {
                     username: input.username,
                     displayName: input.name,
                     image: input.image,
-                }
+                },
             });
 
-            if (!account.id) return false;
+            if (!profile.id) return false;
 
-            return !!await ctx.prisma.user.update({
+            return !!(await ctx.prisma.user.update({
                 where: {
                     id: ctx.session.user.id,
                 },
                 data: {
-                    profileID: account.id,
-                }
-            });
+                    profileID: profile.id,
+                },
+            }));
         }),
     createLoginMethod: publicProcedure
         .input(LoginValidation)

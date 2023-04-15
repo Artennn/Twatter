@@ -7,14 +7,14 @@ import { trpc } from "../utils/trpc";
 import { getServerAuthSession } from "server/common/get-server-auth-session";
 
 import { NewLoginMethod, type LoginMethod } from "../components/auth/NewLoginMethod";
-import { type Account, NewAccount } from "../components/auth/NewAccount";
+import { type Profile, NewProfile } from "../components/auth/NewProfile";
 import { AuthLayout } from "components/auth/Layouts";
 
 import { Backdrop, CircularProgress } from "@mui/material";
 
 const RegisterPage: NextPage<{ authed: boolean }> = ({ authed }) => {
     const router = useRouter();
-    const accountMutation = trpc.auth.createAccount.useMutation();
+    const profileMutation = trpc.auth.createProfile.useMutation();
     const methodMutation = trpc.auth.createLoginMethod.useMutation();
 
     const [loading, setLoading] = useState(false);
@@ -39,12 +39,12 @@ const RegisterPage: NextPage<{ authed: boolean }> = ({ authed }) => {
                 setError(error.message);
             },
         });
-    }
+    };
 
-    const handleCreateAccount = async (data: Account) => {
+    const handleCreateProfile = async (data: Profile) => {
         setLoading(true);
         setError(undefined);
-        accountMutation.mutate(data, {
+        profileMutation.mutate(data, {
             onSuccess: async () => {
                 // force the client session to update
                 document.dispatchEvent(new Event("visibilitychange"));
@@ -55,25 +55,29 @@ const RegisterPage: NextPage<{ authed: boolean }> = ({ authed }) => {
                 setError(error.message);
             },
         });
-    }
+    };
 
-    if (authed) return (
-        <AuthLayout title="Create new Profile">
-            <NewAccount handleCreate={handleCreateAccount} error={error} />
-            <Backdrop open={loading || false}>
-                <CircularProgress size={75} />
-            </Backdrop>
-        </AuthLayout>
-    )
+    if (authed)
+        return (
+            <AuthLayout title="Create new Profile">
+                <NewProfile handleCreate={handleCreateProfile} error={error} />
+                <Backdrop open={loading || false}>
+                    <CircularProgress size={75} />
+                </Backdrop>
+            </AuthLayout>
+        );
 
     return (
         <AuthLayout title="Register">
-            <NewLoginMethod handleCreate={handleCreateLoginMethod} error={error} />
+            <NewLoginMethod
+                handleCreate={handleCreateLoginMethod}
+                error={error}
+            />
             <Backdrop open={loading || false}>
                 <CircularProgress size={75} />
             </Backdrop>
         </AuthLayout>
-    )
+    );
 };
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {

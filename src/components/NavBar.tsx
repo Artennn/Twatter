@@ -1,25 +1,9 @@
-import { IconButton, Stack, Typography } from "@mui/material";
+import { IconButton, Stack, Tooltip, Typography } from "@mui/material";
 
 import FlareIcon from '@mui/icons-material/Flare';
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 import { useRouter } from "next/router";
-
-const animation = {
-    animation: "pulse 10s linear infinite",
-    "@keyframes pulse": {
-        "0%": {
-            color: "inherit",
-        },
-        "10%": {
-            color: "red",
-        },
-        "20%": {
-            color: "inherit",
-        },
-        "100%": {}
-    }
-}
 
 const NavBar = ({
     goBack,
@@ -34,11 +18,6 @@ const NavBar = ({
 
     const handleGoBack = () => {
         router.back();
-    }
-
-    const handleClickSpecial = () => {
-        window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
-        //router.push("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
     }
 
     return (
@@ -70,9 +49,11 @@ const NavBar = ({
                 : null
             }
             {!goBack
-                ? <IconButton sx={{ "&:hover": { color: "red" }, ...animation }} onClick={handleClickSpecial}>
-                    <FlareIcon />
-                </IconButton>   
+                ? <Tooltip title="Sort by Recent" placement="bottom" arrow>
+                    <IconButton>
+                        <FlareIcon />
+                    </IconButton>   
+                </Tooltip> 
                 : null
             }
         </Stack>
