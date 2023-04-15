@@ -16,10 +16,7 @@ import { trpc } from "utils/trpc";
 import { useSession } from "next-auth/react";
 import { DisplayNameHorizontal } from "components/Misc";
 
-const getHour = (date: Date) => {
-    const text = date.toLocaleString();
-    return text.substring(text.length - 8, text.length - 3);
-}
+import { getCreatedTime } from "./Post";
 
 const PostPreview = ({
     data,
@@ -101,7 +98,7 @@ const PostPreview = ({
                                 verified={owner.verified}
                             />
 
-                            <Typography> {getHour(createdAt)} </Typography>
+                            <Typography>{getCreatedTime(createdAt)}</Typography>
 
                             <IconButton sx={{ ml: "auto" }} onClick={handleOpenOptions} >
                                 {sessionData?.user?.isAdmin 

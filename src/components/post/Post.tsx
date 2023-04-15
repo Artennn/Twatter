@@ -16,14 +16,11 @@ import { trpc } from "utils/trpc";
 import { useSession } from "next-auth/react";
 import { DisplayNameVertical, Mention } from "components/Misc";
 
-const getHour = (date: Date) => {
-    const text = date.toLocaleString();
-    return text.substring(text.length - 8, text.length - 3);
-}
+import moment from "moment";
 
-const getDate = (date: Date) => {
-    const text = date.toLocaleString();
-    return text.substring(0, text.length - 10);
+export const getCreatedTime = (date: Date) => {
+    const mDate = moment(date);
+    return moment().diff(mDate, 'hours') > 24 ? mDate.format("MMM d YYYY") : mDate.fromNow();
 }
 
 const Post = ({ 
@@ -126,7 +123,7 @@ const Post = ({
                 } */}
 
                 <Typography color="text.dark" mt={2} mb={2}> 
-                    {getHour(createdAt)} · {getDate(createdAt)} 
+                    {getCreatedTime(createdAt)} 
                 </Typography>
 
                 <Stack direction="row" spacing={3} pt={2} pb={2} borderTop="1px solid grey" borderBottom="1px solid grey">
