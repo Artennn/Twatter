@@ -6,6 +6,7 @@ import { Box, Button, Stack, IconButton, SvgIcon, Typography, Checkbox } from "@
 import CloseIcon from '@mui/icons-material/Close';
 
 import { ControlledTextField } from "../Inputs";
+import { signOut } from "next-auth/react";
 
 export const AccountValidation = z.object({
     name: z.string().min(3, "Zbyt krótka nazwa"),
@@ -36,7 +37,10 @@ export const NewAccount = ({
 
     return (
         <>
-            <IconButton sx={{ position: 'absolute', top: 8, left: 8 }}>
+            <IconButton
+                sx={{ position: "absolute", top: 8, left: 8 }}
+                onClick={() => signOut()}
+            >
                 <CloseIcon fontSize="large" />
             </IconButton>
 
