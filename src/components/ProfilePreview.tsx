@@ -13,10 +13,12 @@ const ProfilePreview = ({
     profile,
     isFollowing,
     isOwner,
+    onFollowToggle,
 }: {
     profile: Profile,
     isFollowing: boolean,
     isOwner?: boolean,
+    onFollowToggle?: () => void;
 }) => {
     const router = useRouter();
     const queryUtils = trpc.useContext();
@@ -29,6 +31,7 @@ const ProfilePreview = ({
         mutate(profile.id, {
             onSuccess: () => {
                 queryUtils.follows.invalidate();
+                onFollowToggle && onFollowToggle();
             }
         })
     }

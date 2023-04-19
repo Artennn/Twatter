@@ -25,6 +25,7 @@ const trends = [
 ];
 
 const Trending = () => {
+    const { route } = useRouter();
     const shouldBeShown = useMediaQuery("(min-width:1270px)");
 
     const router = useRouter();
@@ -45,18 +46,20 @@ const Trending = () => {
 
     return (
         <Box width={400} minHeight="100vh" height="100%" p={2} pl={4} pt={0}>
-            <Box
-                position="sticky"
-                bgcolor="background.default"
-                top={0}
-                pt={1}
-                pb={1}
-                zIndex={1}
-            >
-                <SearchField />
-            </Box>
+            {!route.includes("/search") && (
+                <Box
+                    position="sticky"
+                    bgcolor="background.default"
+                    top={0}
+                    pt={1}
+                    pb={1}
+                    zIndex={1}
+                >
+                    <SearchField />
+                </Box>
+            )}
 
-            <Stack direction="column" spacing={2}>
+            <Stack direction="column" spacing={2} mt={2}>
                 <Box bgcolor="background.grey2" borderRadius={5} pb={2}>
                     <Typography fontSize={20} fontWeight="bold" p={2}>
                         Trends for you

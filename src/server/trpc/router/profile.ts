@@ -70,6 +70,27 @@ export const profileRouter = router({
                 },
             });
         }),
+    findMany: protectedProcedure
+        .input(z.string())
+        .query(async ({ input, ctx }) => {
+            const { profileID } = ctx.session.user;
+            if (!profileID) return undefined;
+
+            return await ctx.prisma.profile.findMany({
+                include: {
+                    followers: {
+                        where: {
+                            followerID: profileID,
+                        }
+                    }
+                },
+                where: {
+                    username: {
+                        contains: input,
+                    },
+                },
+            });
+        }),
     edit: protectedProcedure
         .input(EditProfileValidation)
         .mutation(async ({ input, ctx }) => {

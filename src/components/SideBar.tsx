@@ -108,16 +108,16 @@ const SideBar = () => {
                         />
                         <ListItem 
                             name="Explore"
-                            url="/"
+                            url="/search"
                             Icon={TagIcon}
-                            selected={currentPage === "/explore"}
+                            badge
+                            selected={currentPage === "/search"}
                             onClick={handleRedirect}
                         />
                         <ListItem 
                             name="Notifications"
                             url="/"
                             Icon={NotificationsIcon}
-                            badge
                             selected={currentPage === "/notifications"}
                             onClick={handleRedirect}
                         />
