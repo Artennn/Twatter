@@ -1,21 +1,31 @@
 import { router, publicProcedure, protectedProcedure } from "../trpc";
-
+import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
-export const includeFullPost = { 
+export const includeFullPost = Prisma.validator<Prisma.PostInclude>()({
     owner: true, 
     _count: { 
         select: { 
             comments: true 
         }
-    }
-};
+    },
+});
 
-export const includeFullParent = {
+export const includeFullParent = Prisma.validator<Prisma.PostInclude>()({
     parent: {
         include: includeFullPost,
     }
-}
+});
+
+type FullPost = Prisma.PostGetPayload<{
+    include: typeof includeFullPost,
+}>;
+
+type FullParent = Prisma.PostGetPayload<{
+    include: typeof includeFullParent,
+}>;
+
+type FullPostWithParent = FullPost & FullParent;
 
 export const postRouter = router({
     get: publicProcedure
@@ -119,7 +129,9 @@ export const postRouter = router({
         .query(async ({ ctx }) => {
             const { profileID } = ctx.session.user;
             if (!profileID) return undefined;
-            const result = await ctx.prisma.profile.findUnique({
+            let posts: FullPostWithParent[] = [];
+            // get posts made by followed profiles
+            const follows = await ctx.prisma.profile.findUnique({
                 where: { id: ctx.session.user.profileID },
                 select: { 
                     following: {
@@ -129,31 +141,24 @@ export const postRouter = router({
                     }
                 }
             })
-            if (!result?.following || result.following.length === 0) {
-                const posts = await ctx.prisma.post.findMany({
+            if (follows?.following) {
+                const add = await ctx.prisma.post.findMany({
                     include: {
                         ...includeFullPost,
-                        ...includeFullParent,
+                        ...includeFullParent
                     },
                     orderBy: { createdAt: "desc" },
-                    take: 10,
-                });
-                return posts.filter(post => !posts.some(post2 => post2.parentPostID === post.id))
-            }
-            let posts = await ctx.prisma.post.findMany({
-                include: {
-                    ...includeFullPost,
-                    ...includeFullParent
-                },
-                orderBy: { createdAt: "desc" },
-                where: { 
-                    owner: {
-                        id: {
-                            in: [...result.following.map(user => user.followingID), profileID],
+                    where: { 
+                        owner: {
+                            id: {
+                                in: [...follows.following.map(user => user.followingID), profileID],
+                            }
                         }
-                    }
-                },
-            })
+                    },
+                })
+                posts = add;
+            }
+            // add extra posts
             if (posts.length < 10) {
                 const add = await ctx.prisma.post.findMany({
                     include: {
@@ -164,9 +169,15 @@ export const postRouter = router({
                     take: 10,
                 });
                 posts = [...posts, ...add];
-                posts = posts.sort((a, b) => a.createdAt < b.createdAt? 1 : -1);
             }
+            // remove posts that are included by their replies
             posts = posts.filter(post => !posts.some(post2 => post2.parentPostID === post.id));
+            // remove duplicate posts
+            posts = posts.filter((post, key, self) => key === self.findIndex(x => x.id === post.id));
+            // remove duplicate replies
+            posts = posts.filter((post, key, self) => key === self.findIndex(x => x.parentPostID === post.parentPostID));
+            // sort posts
+            posts = posts.sort((a, b) => a.createdAt < b.createdAt? 1 : -1);
             return posts;
         }),
     create: protectedProcedure
