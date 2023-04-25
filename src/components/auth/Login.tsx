@@ -26,9 +26,14 @@ export const Login = ({
 }) => {
     const formMethodes = useForm<Login>({
         resolver: zodResolver(validateForm),
-        mode: "onTouched"
+        mode: "onTouched",
+        defaultValues: {
+            email: "demo@demo.com",
+            password: "demoPass",
+        }
     })
 
+    // isDirty should be restored after removing default Values
     const { handleSubmit, formState: { isValid, isDirty } } = formMethodes;
 
     const onSubmit: SubmitHandler<Login> = (data) => {
@@ -102,7 +107,7 @@ export const Login = ({
                             type="submit"
                             variant="contained"
                             color="secondary"
-                            disabled={!isDirty || !isValid}
+                            disabled={!isValid}
                             sx={{ borderRadius: 4 }}
                         >
                             Next
