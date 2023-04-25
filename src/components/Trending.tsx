@@ -15,6 +15,7 @@ import { DisplayNameVertical } from "./Misc";
 
 import { trpc } from "utils/trpc";
 import { useRouter } from "next/router";
+import { useEffect, useRef, useState } from "react";
 
 const trends = [
     ["Politics · Trending ", "#POTUS", "197K Tweets"],
@@ -25,14 +26,34 @@ const trends = [
 ];
 
 const Trending = () => {
-    const { route } = useRouter();
     const shouldBeShown = useMediaQuery("(min-width:1270px)");
+    const ref = useRef<HTMLDivElement>();
+    const [offset, setOffset] = useState(0);
 
     const router = useRouter();
     const { mutate: followMutate } = trpc.follows.follow.useMutation();
     const { data: whoToFollow, refetch } = trpc.profile.getMany.useQuery({
         usernames: ["nasa", "tesla", "elonmusk"],
     });
+
+    const handleResize = () => {
+        // simulate twitters 3rd column behaviour
+        // if content is taller than the screen height  
+        // set top property to the negative diffrence of heights
+        // if not set it to 0
+        if (!ref.current) return; 
+        const diff = ref.current.clientHeight - window.innerHeight;
+        setOffset(diff > 0 ? -diff : 0);
+    };
+
+    useEffect(() => {
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    useEffect(() => {
+        handleResize();
+    }, [whoToFollow])
 
     const handleFollow = (id: number) => {
         followMutate(id, {
@@ -45,8 +66,17 @@ const Trending = () => {
     if (!shouldBeShown) return null;
 
     return (
-        <Box width={400} minHeight="100vh" height="100%" p={2} pl={4} pt={0}>
-            {!route.includes("/search") && (
+        <Box ref={ref} sx={{
+            width: 400,
+            height: 1,
+            minHeight: "100vh",
+            position: "sticky",
+            top: offset,
+            p: 2,
+            pl: 4,
+            pt: 0,
+        }}>
+            {!router.route.includes("/search") && (
                 <Box
                     position="sticky"
                     bgcolor="background.default"
