@@ -14,7 +14,7 @@ export const ControlledTextField = ({
             <TextField
                 {...otherProps}
                 {...field}
-                error={!!errors[name]}
+                error={!!!!errors[name]}
                 helperText={errors[name] ? errors[name]?.message as string : ''}
             />
         )}
